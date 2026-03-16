@@ -98,126 +98,126 @@
   const CARD_RARITY_SYSTEM = {
     'freaky henry': {
       cardname: 'Freaky Henry',
-      cardimg: '/henry/freaky.png',
+      cardimg: './henry/freaky.png',
       cardrareity: 'Common',
       cardworth: 6,
       cardchance: 0.9
     },
     'mogger henry': {
       cardname: 'Mogger Henry',
-      cardimg: '/henry/mog.png',
+      cardimg: './henry/mog.png',
       cardrareity: 'Rare',
       cardworth: 70,
       cardchance: 0.5
     },
     'unphased henry': {
       cardname: 'Unphased Henry',
-      cardimg: '/henry/unphased.png',
+      cardimg: './henry/unphased.png',
       cardrareity: 'Common',
       cardworth: 8,
       cardchance: 0.95
     },
     'thinking henry': {
       cardname: 'Thinking Henry',
-      cardimg: '/henry/thinking.png',
+      cardimg: './henry/thinking.png',
       cardrareity: 'Common',
       cardworth: 9,
       cardchance: 0.95
     },
     'pizza henry': {
       cardname: 'Pizza Henry',
-      cardimg: '/henry/pizza.png',
+      cardimg: './henry/pizza.png',
       cardrareity: 'Epic',
       cardworth: 460,
       cardchance: 0.02
     },
     'steaming henry': {
       cardname: 'Steaming Henry',
-      cardimg: '/henry/steaming.png',
+      cardimg: './henry/steaming.png',
       cardrareity: 'Epic',
       cardworth: 560,
       cardchance: 0.02
     },
     'wizard henry': {
       cardname: 'Wizard Henry',
-      cardimg: '/henry/wizard.png',
+      cardimg: './henry/wizard.png',
       cardrareity: 'Mythic',
       cardworth: 9400,
       cardchance: 0.003
     },
     'pufferfish henry': {
       cardname: 'Pufferfish Henry',
-      cardimg: '/henry/pufferfish.png',
+      cardimg: './henry/pufferfish.png',
       cardrareity: 'Legendary',
       cardworth: 34000,
       cardchance: 0.04
     },
     'drooling henry': {
       cardname: 'Drooling Henry',
-      cardimg: '/henry/drool.png',
+      cardimg: './henry/drool.png',
       cardrareity: 'Epic',
       cardworth: 3400,
       cardchance: 0.04
     },
     'wifebeater henry': {
       cardname: 'Wifebeater Henry',
-      cardimg: '/henry/wifebeater.png',
+      cardimg: './henry/wifebeater.png',
       cardrareity: 'Rare',
       cardworth: 920,
       cardchance: 0.04
     },
     'mad henry': {
       cardname: 'Mad Henry',
-      cardimg: '/henry/rhenry.png',
+      cardimg: './henry/rhenry.png',
       cardrareity: 'Legendary',
       cardworth: 34000,
       cardchance: 0.0002
     },
     'Hengry': {
       cardname: 'Hengry',
-      cardimg: '/henry/hengry.png',
+      cardimg: './henry/hengry.png',
       cardrareity: 'Mythic',
       cardworth: 960000,
       cardchance: 0.0003
     },
     'minecraft henry': {
       cardname: 'Minecraft Henry',
-      cardimg: '/henry/mchen.jpg',
+      cardimg: './henry/mchen.jpg',
       cardrareity: 'Contraband',
       cardworth: 9000400,
       cardchance: 0.00012
     },
     'youngry': {
       cardname: 'Youngry',
-      cardimg: '/henry/bhen.jpg',
+      cardimg: './henry/bhen.jpg',
       cardrareity: 'Legendary',
       cardworth: 3787000,
       cardchance: 0.0003
     },
     'evil henry': {
       cardname: 'Evil Henry',
-      cardimg: '/henry/evil.jpg',
+      cardimg: './henry/evil.jpg',
       cardrareity: 'Epic',
       cardworth: 698400,
       cardchance: 0.0034
     },
     '9th grade henry': {
       cardname: '9th Grade Henry',
-      cardimg: '/henry/9thgradehenry.jpg',
+      cardimg: './henry/9thgradehenry.jpg',
       cardrareity: 'Mythic',
       cardworth: 976333400,
       cardchance: 0.0013
     },
     'bird henry': {
       cardname: 'Bird Henry',
-      cardimg: '/henry/bird.png',
+      cardimg: './henry/bird.png',
       cardrareity: 'Mythic',
       cardworth: 30000400,
       cardchance: 0.0003
     },
     'papi henry': {
       cardname: 'PAPI henry',
-      cardimg: '/henry/papi.png',
+      cardimg: './henry/papi.png',
       cardrareity: 'Contraband',
       cardworth: 92000000000,
       cardchance: 0.0000041
