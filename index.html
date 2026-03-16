@@ -38,6 +38,10 @@
           <p>Pot W/L</p>
           <strong id="stat-pot">0 / 0</strong>
         </article>
+        <article class="stat-item">
+          <p>Rebirths</p>
+          <strong id="stat-rebirths">0</strong>
+        </article>
       </div>
     </header>
 
@@ -45,6 +49,7 @@
       <nav id="tab-nav" class="panel tab-nav" aria-label="Game Sections">
         <button data-tab-target="main" class="tab-btn active">Main</button>
         <button data-tab-target="pot" class="tab-btn">Pot Arena</button>
+        <button data-tab-target="shop" class="tab-btn">Shop</button>
         <button data-tab-target="achievements" class="tab-btn">Achievements</button>
         <button data-tab-target="events" class="tab-btn">Event Feed</button>
       </nav>
@@ -54,6 +59,13 @@
           <div class="section-head">
             <h2>Pack Forge</h2>
             <p>Buy packs, roll weighted cards, and chase high-value drops.</p>
+          </div>
+          <div class="pack-controlbar">
+            <label>
+              Active Crate
+              <select id="active-pack-select"></select>
+            </label>
+            <button id="go-shop">Open Shop</button>
           </div>
           <div id="market-strip" class="market-strip"></div>
           <div id="pack-buttons" class="pack-grid"></div>
@@ -90,6 +102,7 @@
             </label>
             <button id="sell-duplicates">Sell Duplicates</button>
             <button id="sell-commons">Sell All Common</button>
+            <button id="stake-all-top">Stake All Sellable</button>
           </div>
           <div class="table-wrap">
             <table>
@@ -139,13 +152,37 @@
                 <button id="start-pot-round" class="accent">Start Pot Round</button>
               </div>
             </article>
-            <article class="pot-col">
+            <article class="pot-col pot-summary-col">
               <h3>Round Summary</h3>
               <div id="pot-summary" class="pot-summary">
                 <p>Start a round after adding cards to your stake.</p>
               </div>
             </article>
           </div>
+        </section>
+      </section>
+
+      <section id="tab-shop" class="tab-panel" hidden>
+        <section class="panel">
+          <div class="section-head">
+            <h2>Black Market Shop</h2>
+            <p>Unlock crates, buy permanent upgrades, and rebirth for long-run scaling.</p>
+          </div>
+          <div class="shop-grid">
+            <article class="shop-col">
+              <h3>Crate Unlocks</h3>
+              <div id="shop-pack-list" class="shop-list"></div>
+            </article>
+            <article class="shop-col">
+              <h3>Upgrades</h3>
+              <div id="shop-upgrade-list" class="shop-list"></div>
+            </article>
+          </div>
+          <article class="shop-col rebirth-card">
+            <h3>Rebirth</h3>
+            <p id="rebirth-info">Reach the net worth target to rebirth.</p>
+            <button id="rebirth-btn" class="accent">Rebirth Run</button>
+          </article>
         </section>
       </section>
 

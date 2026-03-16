@@ -22,13 +22,13 @@
   };
 
   const RARITY_BALANCE_PROFILE = {
-    Common: { chanceShare: 0.79, minWorth: 4, maxWorth: 10 },
-    Uncommon: { chanceShare: 0.16, minWorth: 10, maxWorth: 24 },
-    Rare: { chanceShare: 0.04, minWorth: 30, maxWorth: 65 },
-    Epic: { chanceShare: 0.008, minWorth: 80, maxWorth: 240 },
-    Legendary: { chanceShare: 0.0017, minWorth: 600, maxWorth: 1600 },
-    Mythic: { chanceShare: 0.00025, minWorth: 1200, maxWorth: 5000 },
-    Contraband: { chanceShare: 0.00005, minWorth: 8000, maxWorth: 30000 }
+    Common: { chanceShare: 0.79, minWorth: 10, maxWorth: 35 },
+    Uncommon: { chanceShare: 0.16, minWorth: 40, maxWorth: 250 },
+    Rare: { chanceShare: 0.04, minWorth: 300, maxWorth: 8000 },
+    Epic: { chanceShare: 0.008, minWorth: 8000, maxWorth: 350000 },
+    Legendary: { chanceShare: 0.0017, minWorth: 250000, maxWorth: 8500000 },
+    Mythic: { chanceShare: 0.00025, minWorth: 12000000, maxWorth: 650000000 },
+    Contraband: { chanceShare: 0.00005, minWorth: 900000000, maxWorth: 9000000000 }
   };
 
   const PACK_TYPES = [
@@ -36,6 +36,7 @@
       id: 'street-crate',
       name: 'Street Crate',
       cost: 40,
+      unlockCost: 0,
       cardsPerPack: 3,
       rarityBoost: {
         Common: 1,
@@ -51,6 +52,7 @@
       id: 'tactical-case',
       name: 'Tactical Case',
       cost: 130,
+      unlockCost: 1200,
       cardsPerPack: 4,
       rarityBoost: {
         Common: 0.84,
@@ -66,6 +68,7 @@
       id: 'black-vault',
       name: 'Black Vault',
       cost: 480,
+      unlockCost: 6800,
       cardsPerPack: 5,
       rarityBoost: {
         Common: 0.58,
@@ -81,6 +84,7 @@
       id: 'omega-safe',
       name: 'Omega Safe',
       cost: 1600,
+      unlockCost: 28000,
       cardsPerPack: 6,
       rarityBoost: {
         Common: 0.4,
@@ -96,6 +100,7 @@
       id: 'diamond-treasury',
       name: 'Diamond Treasury',
       cost: 5800,
+      unlockCost: 120000,
       cardsPerPack: 7,
       rarityBoost: {
         Common: 0.22,
@@ -111,6 +116,7 @@
       id: 'void-arsenal',
       name: 'Void Arsenal',
       cost: 22000,
+      unlockCost: 480000,
       cardsPerPack: 8,
       rarityBoost: {
         Common: 0.12,
@@ -126,6 +132,7 @@
       id: 'singularity-core',
       name: 'Singularity Core',
       cost: 90000,
+      unlockCost: 1900000,
       cardsPerPack: 9,
       rarityBoost: {
         Common: 0.05,
@@ -141,6 +148,7 @@
       id: 'godmode-reliquary',
       name: 'Godmode Reliquary',
       cost: 350000,
+      unlockCost: 8500000,
       cardsPerPack: 10,
       rarityBoost: {
         Common: 0.01,
@@ -154,6 +162,11 @@
     }
   ];
 
+  const PACK_BY_ID = PACK_TYPES.reduce((map, pack) => {
+    map[pack.id] = pack;
+    return map;
+  }, {});
+
   const BOT_NAMES = [
     'RustByte',
     'CaseGoblin',
@@ -164,6 +177,35 @@
     'ScrapOracle',
     'ChromeViper'
   ];
+
+  const SHOP_UPGRADES = [
+    {
+      id: 'crateLuck',
+      title: 'Crate Calibration',
+      description: 'Boost Rare+ pull weight in all owned crates.',
+      baseCost: 2500,
+      growth: 2.05,
+      maxLevel: 8
+    },
+    {
+      id: 'potLuck',
+      title: 'Pot Analytics',
+      description: 'Increase your weighted chance in pot rounds.',
+      baseCost: 3200,
+      growth: 2.2,
+      maxLevel: 8
+    },
+    {
+      id: 'sellBoost',
+      title: 'Broker License',
+      description: 'Increase sell prices for all cards.',
+      baseCost: 2200,
+      growth: 2.0,
+      maxLevel: 8
+    }
+  ];
+
+  const REBIRTH_BASE_REQUIREMENT = 250000;
 
   const CARD_RARITY_SYSTEM = {
     'freaky henry': {
@@ -413,8 +455,11 @@
     statCards: byId('stat-cards'),
     statSold: byId('stat-sold'),
     statPot: byId('stat-pot'),
+    statRebirths: byId('stat-rebirths'),
     marketStrip: byId('market-strip'),
     packButtons: byId('pack-buttons'),
+    activePackSelect: byId('active-pack-select'),
+    goShop: byId('go-shop'),
     openBest: byId('open-best'),
     openTen: byId('open-ten'),
     advanceMarket: byId('advance-market'),
@@ -424,6 +469,7 @@
     sortBy: byId('sort-by'),
     sellDuplicates: byId('sell-duplicates'),
     sellCommons: byId('sell-commons'),
+    stakeAllTop: byId('stake-all-top'),
     inventoryBody: byId('inventory-body'),
     stakeList: byId('stake-list'),
     stakeValue: byId('stake-value'),
@@ -432,6 +478,10 @@
     potStateLabel: byId('pot-state-label'),
     potTimer: byId('pot-timer'),
     potSummary: byId('pot-summary'),
+    shopPackList: byId('shop-pack-list'),
+    shopUpgradeList: byId('shop-upgrade-list'),
+    rebirthInfo: byId('rebirth-info'),
+    rebirthBtn: byId('rebirth-btn'),
     achievementList: byId('achievement-list'),
     eventFeed: byId('event-feed'),
     exportSave: byId('export-save'),
@@ -446,6 +496,7 @@
     tabPanels: {
       main: byId('tab-main'),
       pot: byId('tab-pot'),
+      shop: byId('tab-shop'),
       achievements: byId('tab-achievements'),
       events: byId('tab-events')
     }
@@ -458,6 +509,7 @@
   init();
 
   function init() {
+    ensureStateIntegrity();
     populateRarityFilter();
     renderPackButtons();
     wireEvents();
@@ -482,6 +534,46 @@
 
   function byId(id) {
     return document.getElementById(id);
+  }
+
+  function ensureStateIntegrity() {
+    if (!Array.isArray(state.ownedPacks)) {
+      state.ownedPacks = ['street-crate'];
+    }
+    state.ownedPacks = Array.from(new Set(state.ownedPacks.filter((id) => Boolean(PACK_BY_ID[id]))));
+    if (!state.ownedPacks.includes('street-crate')) {
+      state.ownedPacks.unshift('street-crate');
+    }
+    state.ownedPacks.sort((a, b) => PACK_BY_ID[a].cost - PACK_BY_ID[b].cost);
+
+    if (!PACK_BY_ID[state.activePackId] || !state.ownedPacks.includes(state.activePackId)) {
+      state.activePackId = state.ownedPacks[0] || 'street-crate';
+    }
+
+    if (!state.upgrades || typeof state.upgrades !== 'object') {
+      state.upgrades = {};
+    }
+    SHOP_UPGRADES.forEach((upgrade) => {
+      const raw = Number(state.upgrades[upgrade.id]) || 0;
+      state.upgrades[upgrade.id] = clamp(Math.floor(raw), 0, upgrade.maxLevel);
+    });
+
+    state.rebirths = Math.max(0, Math.floor(Number(state.rebirths) || 0));
+  }
+
+  function getPackById(packId) {
+    return PACK_BY_ID[packId] || null;
+  }
+
+  function getOwnedPacks() {
+    return state.ownedPacks
+      .map((id) => getPackById(id))
+      .filter(Boolean)
+      .sort((a, b) => a.cost - b.cost);
+  }
+
+  function isPackOwned(packId) {
+    return state.ownedPacks.includes(packId);
   }
 
   function initTabs() {
@@ -550,8 +642,24 @@
       openPack(packId, count);
     });
 
+    if (dom.activePackSelect) {
+      dom.activePackSelect.addEventListener('change', () => {
+        const packId = dom.activePackSelect.value;
+        if (!isPackOwned(packId)) {
+          return;
+        }
+        state.activePackId = packId;
+        saveState();
+        renderAll();
+      });
+    }
+
+    if (dom.goShop) {
+      dom.goShop.addEventListener('click', () => setActiveTab('shop'));
+    }
+
     dom.openBest.addEventListener('click', () => {
-      const affordable = PACK_TYPES.filter((pack) => state.balance >= pack.cost).sort((a, b) => b.cost - a.cost)[0];
+      const affordable = getOwnedPacks().filter((pack) => state.balance >= pack.cost).sort((a, b) => b.cost - a.cost)[0];
       if (!affordable) {
         pushLog('No pack is affordable right now.', 'negative');
         renderAll();
@@ -560,7 +668,7 @@
       openPack(affordable.id, 1);
     });
 
-    dom.openTen.addEventListener('click', () => openPack('street-crate', 10));
+    dom.openTen.addEventListener('click', () => openPack(state.activePackId, 10));
     dom.advanceMarket.addEventListener('click', () => {
       advanceMarket(0.8, false);
       saveState();
@@ -580,6 +688,7 @@
 
     dom.sellDuplicates.addEventListener('click', sellDuplicates);
     dom.sellCommons.addEventListener('click', () => sellAllByRarity('Common'));
+    dom.stakeAllTop.addEventListener('click', stakeAllSellableCards);
 
     dom.stakeList.addEventListener('click', (event) => {
       const button = event.target.closest('button[data-stake-action][data-id]');
@@ -598,6 +707,16 @@
 
     dom.startPotRound.addEventListener('click', startPotRound);
 
+    if (dom.shopPackList) {
+      dom.shopPackList.addEventListener('click', handleShopActionClick);
+    }
+    if (dom.shopUpgradeList) {
+      dom.shopUpgradeList.addEventListener('click', handleShopActionClick);
+    }
+    if (dom.rebirthBtn) {
+      dom.rebirthBtn.addEventListener('click', performRebirth);
+    }
+
     dom.exportSave.addEventListener('click', exportSave);
     dom.importSave.addEventListener('click', importSave);
     dom.resetGame.addEventListener('click', resetGame);
@@ -615,8 +734,14 @@
   }
 
   function openPack(packId, count) {
-    const pack = PACK_TYPES.find((entry) => entry.id === packId);
+    const pack = getPackById(packId);
     if (!pack) {
+      return;
+    }
+    if (!isPackOwned(packId)) {
+      pushLog(`${pack.name} is locked. Unlock it in the shop.`, 'negative');
+      setActiveTab('shop');
+      renderAll();
       return;
     }
     let opened = 0;
@@ -668,13 +793,16 @@
     renderAll();
   }
 
-  function drawCardFromPack(pack) {
+  function drawCardFromPack(pack, options) {
+    const applyPlayerLuck = !options || options.applyPlayerLuck !== false;
+    const crateLuckMultiplier = applyPlayerLuck ? getCrateLuckMultiplier() : 1;
     const weighted = CARD_IDS.map((id) => {
       const card = CATALOG[id];
       const boost = pack.rarityBoost[card.cardrareity] || 1;
+      const rarityBoost = rarityRank(card.cardrareity) >= rarityRank('Rare') ? crateLuckMultiplier : 1;
       return {
         id,
-        weight: Math.max(0, card.cardchance * boost)
+        weight: Math.max(0, card.cardchance * boost * rarityBoost)
       };
     });
     const selected = pickWeighted(weighted, (entry) => entry.weight);
@@ -734,7 +862,7 @@
     if (!finalAmount) {
       return 0;
     }
-    const price = getCardUnitPrice(cardId);
+    const price = Math.max(1, Math.round(getCardUnitPrice(cardId) * getSellMultiplier()));
     const gain = price * finalAmount;
     state.balance += gain;
     state.soldValue += gain;
@@ -786,6 +914,143 @@
     } else {
       pushLog(`Sold ${soldCount} ${rarity} cards for ${money(gained)}.`, 'positive');
     }
+    saveState();
+    renderAll();
+  }
+
+  function stakeAllSellableCards() {
+    if (state.activePotRound) {
+      pushLog('Cannot modify stake while a pot round is running.', 'warning');
+      renderAll();
+      return;
+    }
+    let total = 0;
+    CARD_IDS.forEach((cardId) => {
+      const sellable = getSellableQuantity(cardId);
+      if (sellable <= 0) {
+        return;
+      }
+      changeStake(cardId, sellable);
+      total += sellable;
+    });
+    if (!total) {
+      pushLog('No sellable cards available to stake.', 'warning');
+    } else {
+      pushLog(`Added ${total} cards to your stake.`, 'positive');
+    }
+    saveState();
+    renderAll();
+  }
+
+  function handleShopActionClick(event) {
+    const button = event.target.closest('button[data-shop-action]');
+    if (!button) {
+      return;
+    }
+    const action = button.dataset.shopAction;
+    if (action === 'unlock-pack') {
+      unlockPack(button.dataset.packId);
+      return;
+    }
+    if (action === 'set-active-pack') {
+      const packId = button.dataset.packId;
+      if (isPackOwned(packId)) {
+        state.activePackId = packId;
+        pushLog(`Active crate set to ${PACK_BY_ID[packId].name}.`, 'positive');
+        saveState();
+        renderAll();
+      }
+      return;
+    }
+    if (action === 'buy-upgrade') {
+      buyUpgrade(button.dataset.upgradeId);
+    }
+  }
+
+  function unlockPack(packId) {
+    const pack = getPackById(packId);
+    if (!pack || pack.unlockCost <= 0) {
+      return;
+    }
+    if (isPackOwned(packId)) {
+      pushLog(`${pack.name} is already unlocked.`, 'warning');
+      renderAll();
+      return;
+    }
+    if (state.balance < pack.unlockCost) {
+      pushLog(`Need ${money(pack.unlockCost)} to unlock ${pack.name}.`, 'negative');
+      renderAll();
+      return;
+    }
+    state.balance -= pack.unlockCost;
+    state.ownedPacks.push(packId);
+    state.ownedPacks = Array.from(new Set(state.ownedPacks)).sort((a, b) => PACK_BY_ID[a].cost - PACK_BY_ID[b].cost);
+    state.activePackId = packId;
+    pushLog(`Unlocked ${pack.name} for ${money(pack.unlockCost)}.`, 'positive');
+    saveState();
+    renderAll();
+  }
+
+  function buyUpgrade(upgradeId) {
+    const upgrade = SHOP_UPGRADES.find((entry) => entry.id === upgradeId);
+    if (!upgrade) {
+      return;
+    }
+    const level = getUpgradeLevel(upgradeId);
+    if (level >= upgrade.maxLevel) {
+      pushLog(`${upgrade.title} is maxed out.`, 'warning');
+      renderAll();
+      return;
+    }
+    const cost = getUpgradeCost(upgrade, level);
+    if (state.balance < cost) {
+      pushLog(`Need ${money(cost)} to buy ${upgrade.title}.`, 'negative');
+      renderAll();
+      return;
+    }
+    state.balance -= cost;
+    state.upgrades[upgradeId] = level + 1;
+    pushLog(`${upgrade.title} upgraded to level ${level + 1}.`, 'positive');
+    saveState();
+    renderAll();
+  }
+
+  function performRebirth() {
+    const requirement = getRebirthRequirement();
+    const netWorth = getNetWorth();
+    if (state.activePotRound) {
+      pushLog('Finish the active pot round before rebirthing.', 'warning');
+      renderAll();
+      return;
+    }
+    if (netWorth < requirement) {
+      pushLog(`Rebirth requires ${money(requirement)} net worth.`, 'negative');
+      renderAll();
+      return;
+    }
+
+    const approved = window.confirm(
+      `Rebirth now? This resets your current run but keeps unlocked crates/upgrades.\nRequired: ${money(requirement)} | Current: ${money(netWorth)}`
+    );
+    if (!approved) {
+      return;
+    }
+
+    const keptPacks = Array.from(new Set((state.ownedPacks || []).concat('street-crate'))).filter((id) => Boolean(PACK_BY_ID[id]));
+    const keptUpgrades = sanitizeUpgradeMap(state.upgrades);
+    const keptAchievements = Array.isArray(state.unlockedAchievements) ? [...state.unlockedAchievements] : [];
+    const nextRebirths = state.rebirths + 1;
+
+    state = buildInitialState();
+    state.rebirths = nextRebirths;
+    state.ownedPacks = keptPacks.sort((a, b) => PACK_BY_ID[a].cost - PACK_BY_ID[b].cost);
+    state.activePackId = state.ownedPacks.includes('street-crate') ? 'street-crate' : state.ownedPacks[0];
+    state.upgrades = keptUpgrades;
+    state.unlockedAchievements = keptAchievements;
+    state.balance = 500 + nextRebirths * 400;
+    closeResultModal();
+    setActiveTab('main');
+    pushLog(`Rebirth complete. Run #${nextRebirths} started with ${money(state.balance)}.`, 'positive');
     saveState();
     renderAll();
   }
@@ -844,7 +1109,7 @@
     const botEntries = createBotEntries(playerValue, startedAt);
     const participants = [{ name: 'You', value: playerValue, cards: playerCards, isPlayer: true, joinAt: startedAt }, ...botEntries];
     const totalPotValue = participants.reduce((sum, participant) => sum + participant.value, 0);
-    const playerChance = playerValue / totalPotValue;
+    const playerChance = getParticipantChance(participants[0], participants);
     const resolveAt = startedAt + randomInt(7000, 10500);
 
     state.activePotRound = {
@@ -873,10 +1138,10 @@
 
     const activeRound = state.activePotRound;
     const participants = activeRound.participants;
-    const winner = pickWeighted(participants, (entry) => entry.value);
+    const winner = pickWeighted(participants, getParticipantWeight);
     const totalPotValue = participants.reduce((sum, participant) => sum + participant.value, 0);
     const playerValue = activeRound.playerValue;
-    const playerChance = playerValue / Math.max(1, totalPotValue);
+    const playerChance = getParticipantChance(participants.find((entry) => entry.isPlayer) || participants[0], participants);
     const potCards = mergeMaps(participants.map((participant) => participant.cards));
 
     state.lastPotRound = {
@@ -939,7 +1204,7 @@
       while (value < target && attempts < 140) {
         attempts += 1;
         const pack = chooseBotPack(playerValue);
-        const cardId = drawCardFromPack(pack);
+        const cardId = drawCardFromPack(pack, { applyPlayerLuck: false });
         addCard(cards, cardId, 1);
         value += getCardUnitPrice(cardId);
       }
@@ -1020,14 +1285,18 @@
   }
 
   function renderAll() {
+    ensureStateIntegrity();
     syncStakeAgainstInventory();
     renderStats();
+    renderActivePackControls();
     renderMarketStrip();
+    renderPackButtons();
     renderPackButtonsState();
     renderPullGrid();
     renderInventory();
     renderStake();
     renderPotSummary();
+    renderShop();
     renderAchievements();
     renderEvents();
   }
@@ -1039,11 +1308,30 @@
     dom.statCards.textContent = String(state.cardsPulled);
     dom.statSold.textContent = money(state.soldValue);
     dom.statPot.textContent = `${state.potWins} / ${state.potLosses}`;
+    dom.statRebirths.textContent = String(state.rebirths);
     if (state.lastPullId) {
       const card = CATALOG[state.lastPullId];
       dom.lastPull.textContent = `Last pull: ${card.cardname} (${card.cardrareity}, ${money(getCardUnitPrice(state.lastPullId))})`;
     } else {
       dom.lastPull.textContent = 'No pulls yet.';
+    }
+  }
+
+  function renderActivePackControls() {
+    const owned = getOwnedPacks();
+    if (!owned.length) {
+      return;
+    }
+    dom.activePackSelect.innerHTML = owned
+      .map((pack) => `<option value="${pack.id}">${pack.name} (${money(pack.cost)})</option>`)
+      .join('');
+    dom.activePackSelect.value = state.activePackId;
+
+    const activePack = getPackById(state.activePackId);
+    if (activePack) {
+      dom.openTen.textContent = `Open 10 ${activePack.name}`;
+    } else {
+      dom.openTen.textContent = 'Open 10 Active Crates';
     }
   }
 
@@ -1061,35 +1349,40 @@
   }
 
   function renderPackButtons() {
-    dom.packButtons.innerHTML = PACK_TYPES.map((pack) => {
-      const odds = pack.odds;
-      return `
-        <article class="pack-card">
-          <h3>${pack.name}</h3>
-          <p>Cost: ${money(pack.cost)} | Cards: ${pack.cardsPerPack}</p>
-          <p>Rare+: ${odds.rarePlus}% | Legendary+: ${odds.legendaryPlus}%</p>
-          <p>Mythic+: ${odds.mythicPlus}% | Contraband: ${odds.contraband}%</p>
-          <div class="pack-actions">
-            <button data-pack="${pack.id}" data-count="1">Open 1</button>
-            <button data-pack="${pack.id}" data-count="5">Open 5</button>
-          </div>
-        </article>
-      `;
-    }).join('');
+    const pack = getPackById(state.activePackId);
+    if (!pack || !isPackOwned(pack.id)) {
+      dom.packButtons.innerHTML = '<p class="empty">No owned crates. Unlock one in the shop.</p>';
+      return;
+    }
+    const odds = computePackOdds(pack, getCrateLuckMultiplier());
+    dom.packButtons.innerHTML = `
+      <article class="pack-card">
+        <h3>${pack.name}</h3>
+        <p>Cost: ${money(pack.cost)} | Cards: ${pack.cardsPerPack}</p>
+        <p>Rare+: ${odds.rarePlus}% | Legendary+: ${odds.legendaryPlus}%</p>
+        <p>Mythic+: ${odds.mythicPlus}% | Contraband: ${odds.contraband}%</p>
+        <div class="pack-actions">
+          <button data-pack="${pack.id}" data-count="1">Open 1</button>
+          <button data-pack="${pack.id}" data-count="5">Open 5</button>
+        </div>
+      </article>
+    `;
   }
 
   function renderPackButtonsState() {
     dom.packButtons.querySelectorAll('button[data-pack][data-count]').forEach((button) => {
-      const pack = PACK_TYPES.find((entry) => entry.id === button.dataset.pack);
+      const pack = getPackById(button.dataset.pack);
       const count = toInt(button.dataset.count, 1);
       if (!pack) {
         button.disabled = true;
         return;
       }
-      button.disabled = state.balance < pack.cost * count;
+      button.disabled = state.balance < pack.cost * count || !isPackOwned(pack.id);
     });
-    dom.openBest.disabled = !PACK_TYPES.some((pack) => state.balance >= pack.cost);
-    dom.openTen.disabled = state.balance < PACK_TYPES[0].cost * 10;
+    const owned = getOwnedPacks();
+    const activePack = getPackById(state.activePackId);
+    dom.openBest.disabled = !owned.some((pack) => state.balance >= pack.cost);
+    dom.openTen.disabled = !activePack || !isPackOwned(activePack.id) || state.balance < activePack.cost * 10;
   }
 
   function renderPullGrid() {
@@ -1241,12 +1534,14 @@
       const round = state.activePotRound;
       const now = Date.now();
       const msLeft = Math.max(0, round.resolveAt - now);
+      const playerParticipant = round.participants.find((entry) => entry.isPlayer) || round.participants[0];
+      const livePlayerChance = getParticipantChance(playerParticipant, round.participants);
       dom.potStateLabel.textContent = `Round live: ${round.participants.length} players in the pot`;
       dom.potTimer.textContent = formatCountdown(msLeft);
       const participantsHtml = round.participants
         .map((entry) => {
           const joined = entry.joinAt <= now;
-          const chance = (entry.value / Math.max(1, round.totalPotValue)) * 100;
+          const chance = getParticipantChance(entry, round.participants) * 100;
           if (!joined) {
             return `
               <article class="pot-player">
@@ -1266,7 +1561,7 @@
         .join('');
       dom.potSummary.innerHTML = `
         <p class="round-line"><strong>Total Pot:</strong> ${money(round.totalPotValue)}</p>
-        <p class="round-line"><strong>Your Stake:</strong> ${money(round.playerValue)} (${(round.playerChance * 100).toFixed(2)}%)</p>
+        <p class="round-line"><strong>Your Stake:</strong> ${money(round.playerValue)} (${(livePlayerChance * 100).toFixed(2)}%)</p>
         ${participantsHtml}
       `;
       return;
@@ -1297,6 +1592,82 @@
       <p class="round-line"><strong>Your Stake:</strong> ${money(round.playerValue)} (${(round.playerChance * 100).toFixed(2)}% chance)</p>
       ${participantsHtml}
     `;
+  }
+
+  function renderShop() {
+    if (!dom.shopPackList || !dom.shopUpgradeList) {
+      return;
+    }
+    renderShopPacks();
+    renderShopUpgrades();
+    renderRebirthPanel();
+  }
+
+  function renderShopPacks() {
+    dom.shopPackList.innerHTML = PACK_TYPES.map((pack) => {
+      const owned = isPackOwned(pack.id);
+      if (pack.unlockCost <= 0) {
+        return `
+          <article class="shop-item">
+            <h4>${pack.name}</h4>
+            <p>Starter crate (always unlocked)</p>
+            <p>Pack Cost: ${money(pack.cost)}</p>
+            <div class="shop-actions">
+              <button data-shop-action="set-active-pack" data-pack-id="${pack.id}" ${state.activePackId === pack.id ? 'disabled' : ''}>
+                ${state.activePackId === pack.id ? 'Active' : 'Set Active'}
+              </button>
+            </div>
+          </article>
+        `;
+      }
+
+      return `
+        <article class="shop-item">
+          <h4>${pack.name}</h4>
+          <p>Pack Cost: ${money(pack.cost)}</p>
+          <p>Unlock Fee: ${money(pack.unlockCost)} (one-time)</p>
+          <div class="shop-actions">
+            ${owned
+              ? `<button data-shop-action="set-active-pack" data-pack-id="${pack.id}" ${state.activePackId === pack.id ? 'disabled' : ''}>
+                  ${state.activePackId === pack.id ? 'Active' : 'Set Active'}
+                </button>`
+              : `<button data-shop-action="unlock-pack" data-pack-id="${pack.id}" ${state.balance >= pack.unlockCost ? '' : 'disabled'}>
+                  Unlock
+                </button>`}
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function renderShopUpgrades() {
+    dom.shopUpgradeList.innerHTML = SHOP_UPGRADES.map((upgrade) => {
+      const level = getUpgradeLevel(upgrade.id);
+      const maxed = level >= upgrade.maxLevel;
+      const cost = getUpgradeCost(upgrade, level);
+      return `
+        <article class="shop-item">
+          <h4>${upgrade.title}</h4>
+          <p>${upgrade.description}</p>
+          <p>Level: ${level}/${upgrade.maxLevel}</p>
+          <p>${maxed ? 'Status: Maxed' : `Next Cost: ${money(cost)}`}</p>
+          <div class="shop-actions">
+            <button data-shop-action="buy-upgrade" data-upgrade-id="${upgrade.id}" ${maxed || state.balance < cost ? 'disabled' : ''}>
+              ${maxed ? 'Maxed' : 'Buy Upgrade'}
+            </button>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function renderRebirthPanel() {
+    const requirement = getRebirthRequirement();
+    const netWorth = getNetWorth();
+    const ready = netWorth >= requirement;
+    dom.rebirthInfo.textContent = `Current net worth ${money(netWorth)} / ${money(requirement)} required. Rebirths: ${state.rebirths}.`;
+    dom.rebirthBtn.disabled = !ready || Boolean(state.activePotRound);
+    dom.rebirthBtn.textContent = ready ? 'Rebirth Run' : 'Rebirth Locked';
   }
 
   function renderAchievements() {
@@ -1458,6 +1829,54 @@
     return rarityRank(CATALOG[highestPullId].cardrareity) >= rarityRank(rarityName);
   }
 
+  function getUpgradeLevel(upgradeId) {
+    return Math.max(0, Math.floor(Number(state.upgrades[upgradeId]) || 0));
+  }
+
+  function getUpgradeCost(upgrade, currentLevel) {
+    return Math.round(upgrade.baseCost * Math.pow(upgrade.growth, currentLevel));
+  }
+
+  function sanitizeUpgradeMap(candidate) {
+    const map = {};
+    SHOP_UPGRADES.forEach((upgrade) => {
+      const level = Math.floor(Number(candidate && candidate[upgrade.id]) || 0);
+      map[upgrade.id] = clamp(level, 0, upgrade.maxLevel);
+    });
+    return map;
+  }
+
+  function getCrateLuckMultiplier() {
+    return 1 + getUpgradeLevel('crateLuck') * 0.08 + state.rebirths * 0.03;
+  }
+
+  function getPotLuckMultiplier() {
+    return 1 + getUpgradeLevel('potLuck') * 0.05 + state.rebirths * 0.04;
+  }
+
+  function getSellMultiplier() {
+    return 1 + getUpgradeLevel('sellBoost') * 0.06 + state.rebirths * 0.08;
+  }
+
+  function getParticipantWeight(entry) {
+    if (!entry) {
+      return 0;
+    }
+    return entry.value * (entry.isPlayer ? getPotLuckMultiplier() : 1);
+  }
+
+  function getParticipantChance(entry, participants) {
+    if (!entry || !Array.isArray(participants) || !participants.length) {
+      return 0;
+    }
+    const total = participants.reduce((sum, participant) => sum + getParticipantWeight(participant), 0);
+    return getParticipantWeight(entry) / Math.max(1, total);
+  }
+
+  function getRebirthRequirement() {
+    return Math.round(REBIRTH_BASE_REQUIREMENT * Math.pow(2.05, state.rebirths));
+  }
+
   function getCardUnitPrice(cardId) {
     const card = CATALOG[cardId];
     if (!card) {
@@ -1591,13 +2010,15 @@
     return RARITY_ORDER.find((rarity) => rarity.toLowerCase() === lower) || null;
   }
 
-  function computePackOdds(pack) {
+  function computePackOdds(pack, crateLuckMultiplier) {
+    const rareBoost = Math.max(1, Number(crateLuckMultiplier) || 1);
     const weights = CARD_IDS.map((id) => {
       const card = CATALOG[id];
       const boost = pack.rarityBoost[card.cardrareity] || 1;
+      const adjusted = rarityRank(card.cardrareity) >= rarityRank('Rare') ? boost * rareBoost : boost;
       return {
         rarity: card.cardrareity,
-        weight: card.cardchance * boost
+        weight: card.cardchance * adjusted
       };
     });
     const total = weights.reduce((sum, entry) => sum + entry.weight, 0);
@@ -1713,6 +2134,10 @@
       potWins: 0,
       potLosses: 0,
       totalPotWinnings: 0,
+      rebirths: 0,
+      upgrades: sanitizeUpgradeMap({}),
+      ownedPacks: ['street-crate'],
+      activePackId: 'street-crate',
       market: buildInitialMarket(),
       unlockedAchievements: [],
       logs: [],
@@ -1727,7 +2152,7 @@
   function loadActiveTab() {
     try {
       const stored = localStorage.getItem(TAB_STORAGE_KEY);
-      if (stored && ['main', 'pot', 'achievements', 'events'].includes(stored)) {
+      if (stored && ['main', 'pot', 'shop', 'achievements', 'events'].includes(stored)) {
         return stored;
       }
     } catch (error) {
@@ -1771,6 +2196,12 @@
     next.potWins = Math.max(0, Number(candidate.potWins) || 0);
     next.potLosses = Math.max(0, Number(candidate.potLosses) || 0);
     next.totalPotWinnings = Math.max(0, Number(candidate.totalPotWinnings) || 0);
+    next.rebirths = Math.max(0, Math.floor(Number(candidate.rebirths) || 0));
+    next.upgrades = sanitizeUpgradeMap(candidate.upgrades);
+    next.ownedPacks = sanitizeOwnedPacks(candidate.ownedPacks);
+    next.activePackId = (typeof candidate.activePackId === 'string' && PACK_BY_ID[candidate.activePackId])
+      ? candidate.activePackId
+      : 'street-crate';
 
     next.inventory = sanitizeMap(candidate.inventory);
     next.stake = sanitizeMap(candidate.stake);
@@ -1809,6 +2240,13 @@
       next.activePotRound = sanitizeActivePotRound(candidate.activePotRound);
     }
 
+    next.ownedPacks = sanitizeOwnedPacks(next.ownedPacks);
+    if (!next.ownedPacks.includes(next.activePackId)) {
+      next.activePackId = next.ownedPacks[0];
+    }
+    next.upgrades = sanitizeUpgradeMap(next.upgrades);
+    next.rebirths = Math.max(0, Math.floor(Number(next.rebirths) || 0));
+
     syncStakeMap(next);
     return next;
   }
@@ -1827,6 +2265,17 @@
       }
       return map;
     }, {});
+  }
+
+  function sanitizeOwnedPacks(candidate) {
+    if (!Array.isArray(candidate)) {
+      return ['street-crate'];
+    }
+    const packs = candidate.filter((packId) => Boolean(PACK_BY_ID[packId]));
+    if (!packs.includes('street-crate')) {
+      packs.push('street-crate');
+    }
+    return Array.from(new Set(packs)).sort((a, b) => PACK_BY_ID[a].cost - PACK_BY_ID[b].cost);
   }
 
   function sanitizeMarket(candidate) {
