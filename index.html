@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Henry Clicker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar panel">
+      <div>
+        <p class="eyebrow">Marketplace Simulator</p>
+        <h1>Henry Clicker</h1>
+      </div>
+      <div class="stats-grid">
+        <article class="stat-item">
+          <p>Balance</p>
+          <strong id="stat-balance">$0</strong>
+        </article>
+        <article class="stat-item">
+          <p>Net Worth</p>
+          <strong id="stat-networth">$0</strong>
+        </article>
+        <article class="stat-item">
+          <p>Packs Opened</p>
+          <strong id="stat-packs">0</strong>
+        </article>
+        <article class="stat-item">
+          <p>Cards Pulled</p>
+          <strong id="stat-cards">0</strong>
+        </article>
+        <article class="stat-item">
+          <p>Value Sold</p>
+          <strong id="stat-sold">$0</strong>
+        </article>
+        <article class="stat-item">
+          <p>Pot W/L</p>
+          <strong id="stat-pot">0 / 0</strong>
+        </article>
+      </div>
+    </header>
+
+    <main class="layout">
+      <nav id="tab-nav" class="panel tab-nav" aria-label="Game Sections">
+        <button data-tab-target="main" class="tab-btn active">Main</button>
+        <button data-tab-target="pot" class="tab-btn">Pot Arena</button>
+        <button data-tab-target="achievements" class="tab-btn">Achievements</button>
+        <button data-tab-target="events" class="tab-btn">Event Feed</button>
+      </nav>
+
+      <section id="tab-main" class="tab-panel active">
+        <section class="panel">
+          <div class="section-head">
+            <h2>Pack Forge</h2>
+            <p>Buy packs, roll weighted cards, and chase high-value drops.</p>
+          </div>
+          <div id="market-strip" class="market-strip"></div>
+          <div id="pack-buttons" class="pack-grid"></div>
+          <div class="inline-actions">
+            <button id="open-best">Open Best Affordable Pack</button>
+            <button id="open-ten">Open 10 Street Crates</button>
+            <button id="advance-market">Advance Market Tick</button>
+          </div>
+          <div id="last-pull" class="last-pull">No pulls yet.</div>
+          <div id="pack-results" class="pull-grid"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Your Cards</h2>
+            <p>Sell cards or reserve them for the pot game.</p>
+          </div>
+          <div class="toolbar">
+            <label>
+              Rarity
+              <select id="rarity-filter">
+                <option value="All">All</option>
+              </select>
+            </label>
+            <label>
+              Sort
+              <select id="sort-by">
+                <option value="value-desc">Value (High-Low)</option>
+                <option value="value-asc">Value (Low-High)</option>
+                <option value="qty-desc">Quantity</option>
+                <option value="name-asc">Name</option>
+                <option value="rarity-desc">Rarity</option>
+              </select>
+            </label>
+            <button id="sell-duplicates">Sell Duplicates</button>
+            <button id="sell-commons">Sell All Common</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Card</th>
+                  <th>Rarity</th>
+                  <th>Owned</th>
+                  <th>In Pot</th>
+                  <th>Unit Price</th>
+                  <th>Total Value</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-body">
+                <tr>
+                  <td colspan="7" class="empty">No cards yet. Open your first pack.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="tab-pot" class="tab-panel" hidden>
+        <section class="panel">
+          <div class="section-head">
+            <h2>Pot Arena</h2>
+            <p>Stake cards against fake players. Winner takes the full pot.</p>
+          </div>
+          <div class="pot-layout">
+            <article class="pot-col">
+              <h3>Your Stake</h3>
+              <div id="stake-list" class="stake-list">
+                <p class="empty">No cards staked yet.</p>
+              </div>
+              <p class="stake-total">Stake Value: <strong id="stake-value">$0</strong></p>
+              <div class="inline-actions">
+                <button id="clear-stake">Clear Stake</button>
+                <button id="start-pot-round" class="accent">Start Pot Round</button>
+              </div>
+            </article>
+            <article class="pot-col">
+              <h3>Round Summary</h3>
+              <div id="pot-summary" class="pot-summary">
+                <p>Start a round after adding cards to your stake.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section id="tab-achievements" class="tab-panel" hidden>
+        <section class="panel">
+          <div class="section-head">
+            <h2>Achievements</h2>
+            <p>Unlock milestones for bonus cash.</p>
+          </div>
+          <div id="achievement-list" class="achievement-list"></div>
+        </section>
+      </section>
+
+      <section id="tab-events" class="tab-panel" hidden>
+        <section class="panel">
+          <div class="section-head">
+            <h2>Event Feed</h2>
+            <p>Latest game events, wins, losses, and market moves.</p>
+          </div>
+          <ul id="event-feed" class="event-feed"></ul>
+        </section>
+      </section>
+    </main>
+
+    <footer class="panel footer-actions">
+      <button id="export-save">Export Save</button>
+      <button id="import-save">Import Save</button>
+      <button id="reset-game" class="danger">Reset Progress</button>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
