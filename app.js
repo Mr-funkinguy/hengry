@@ -21,6 +21,16 @@
     Contraband: { color: '#f26443', volatility: 1.72 }
   };
 
+  const RARITY_BALANCE_PROFILE = {
+    Common: { chanceShare: 0.79, minWorth: 4, maxWorth: 10 },
+    Uncommon: { chanceShare: 0.16, minWorth: 10, maxWorth: 24 },
+    Rare: { chanceShare: 0.04, minWorth: 30, maxWorth: 65 },
+    Epic: { chanceShare: 0.008, minWorth: 80, maxWorth: 240 },
+    Legendary: { chanceShare: 0.0017, minWorth: 600, maxWorth: 1600 },
+    Mythic: { chanceShare: 0.00025, minWorth: 1200, maxWorth: 5000 },
+    Contraband: { chanceShare: 0.00005, minWorth: 8000, maxWorth: 30000 }
+  };
+
   const PACK_TYPES = [
     {
       id: 'street-crate',
@@ -80,6 +90,66 @@
         Legendary: 4,
         Mythic: 5.4,
         Contraband: 7.2
+      }
+    },
+    {
+      id: 'diamond-treasury',
+      name: 'Diamond Treasury',
+      cost: 5800,
+      cardsPerPack: 7,
+      rarityBoost: {
+        Common: 0.22,
+        Uncommon: 0.52,
+        Rare: 1.35,
+        Epic: 3.2,
+        Legendary: 5.1,
+        Mythic: 7.2,
+        Contraband: 10.5
+      }
+    },
+    {
+      id: 'void-arsenal',
+      name: 'Void Arsenal',
+      cost: 22000,
+      cardsPerPack: 8,
+      rarityBoost: {
+        Common: 0.12,
+        Uncommon: 0.32,
+        Rare: 1.1,
+        Epic: 3.8,
+        Legendary: 6.7,
+        Mythic: 10.5,
+        Contraband: 16.4
+      }
+    },
+    {
+      id: 'singularity-core',
+      name: 'Singularity Core',
+      cost: 90000,
+      cardsPerPack: 9,
+      rarityBoost: {
+        Common: 0.05,
+        Uncommon: 0.2,
+        Rare: 0.85,
+        Epic: 4.4,
+        Legendary: 8.4,
+        Mythic: 14.8,
+        Contraband: 25
+      }
+    },
+    {
+      id: 'godmode-reliquary',
+      name: 'Godmode Reliquary',
+      cost: 350000,
+      cardsPerPack: 10,
+      rarityBoost: {
+        Common: 0.01,
+        Uncommon: 0.06,
+        Rare: 0.45,
+        Epic: 3.8,
+        Legendary: 9.5,
+        Mythic: 20.5,
+        Contraband: 45
       }
     }
   ];
@@ -240,11 +310,25 @@
       condition: (s) => s.packsOpened >= 20
     },
     {
+      id: 'pack-veteran',
+      title: 'Case Veteran',
+      description: 'Open 100 packs total.',
+      reward: 1200,
+      condition: (s) => s.packsOpened >= 100
+    },
+    {
       id: 'collection-50',
       title: 'Stacked Vault',
       description: 'Own 50 cards at once.',
       reward: 520,
       condition: (s) => getOwnedCardCount(s.inventory) >= 50
+    },
+    {
+      id: 'collection-150',
+      title: 'Card Hoarder',
+      description: 'Own 150 cards at once.',
+      reward: 2200,
+      condition: (s) => getOwnedCardCount(s.inventory) >= 150
     },
     {
       id: 'seller',
@@ -254,6 +338,13 @@
       condition: (s) => s.soldValue >= 2000
     },
     {
+      id: 'seller-pro',
+      title: 'Market Whale',
+      description: 'Sell over $60,000 in cards.',
+      reward: 5000,
+      condition: (s) => s.soldValue >= 60000
+    },
+    {
       id: 'pot-winner',
       title: 'Pot Hunter',
       description: 'Win 3 pot rounds.',
@@ -261,17 +352,46 @@
       condition: (s) => s.potWins >= 3
     },
     {
+      id: 'pot-regular',
+      title: 'Pot Regular',
+      description: 'Play 10 total pot rounds.',
+      reward: 1600,
+      condition: (s) => (s.potWins + s.potLosses) >= 10
+    },
+    {
+      id: 'pot-profit',
+      title: 'Pot Printer',
+      description: 'Win over $25,000 from pot rounds.',
+      reward: 4200,
+      condition: (s) => s.totalPotWinnings >= 25000
+    },
+    {
+      id: 'legendary-pull',
+      title: 'Legend Pull',
+      description: 'Pull a Legendary or better.',
+      reward: 2400,
+      condition: (s) => hasPulledAtLeastRarity(s.highestPullId, 'Legendary')
+    },
+    {
       id: 'god-pull',
       title: 'Sky Drop',
       description: 'Pull a Mythic or Contraband card.',
       reward: 1500,
-      condition: (s) => {
-        if (!s.highestPullId) {
-          return false;
-        }
-        const rarity = CATALOG[s.highestPullId].cardrareity;
-        return rarityRank(rarity) >= rarityRank('Mythic');
-      }
+      condition: (s) => hasPulledAtLeastRarity(s.highestPullId, 'Mythic')
+    },
+    {
+      id: 'contraband-pull',
+      title: 'Red Tier',
+      description: 'Pull a Contraband card.',
+      reward: 12000,
+      condition: (s) => hasPulledAtLeastRarity(s.highestPullId, 'Contraband')
+    },
+    {
+      id: 'net-worth',
+      title: 'Vault Tycoon',
+      description: 'Reach $100,000 net worth.',
+      reward: 7000,
+      condition: (s) => getNetWorthFromState(s) >= 100000
     }
   ];
 
@@ -309,12 +429,19 @@
     stakeValue: byId('stake-value'),
     clearStake: byId('clear-stake'),
     startPotRound: byId('start-pot-round'),
+    potStateLabel: byId('pot-state-label'),
+    potTimer: byId('pot-timer'),
     potSummary: byId('pot-summary'),
     achievementList: byId('achievement-list'),
     eventFeed: byId('event-feed'),
     exportSave: byId('export-save'),
     importSave: byId('import-save'),
     resetGame: byId('reset-game'),
+    resultModal: byId('result-modal'),
+    closeResult: byId('close-result'),
+    resultTitle: byId('result-title'),
+    resultText: byId('result-text'),
+    resultLoot: byId('result-loot'),
     tabButtons: Array.from(document.querySelectorAll('button[data-tab-target]')),
     tabPanels: {
       main: byId('tab-main'),
@@ -326,6 +453,7 @@
 
   let state = loadState();
   let activeTab = loadActiveTab();
+  let potResolveTicker = null;
 
   init();
 
@@ -334,8 +462,12 @@
     renderPackButtons();
     wireEvents();
     initTabs();
+    ensurePotTicker();
     if (!state.logs.length) {
       pushLog('Simulation loaded. Open a pack to start your run.', 'warning');
+    }
+    if (state.activePotRound && Date.now() >= state.activePotRound.resolveAt) {
+      resolveActivePotRound();
     }
     checkAchievements();
     renderAll();
@@ -469,6 +601,17 @@
     dom.exportSave.addEventListener('click', exportSave);
     dom.importSave.addEventListener('click', importSave);
     dom.resetGame.addEventListener('click', resetGame);
+
+    if (dom.closeResult) {
+      dom.closeResult.addEventListener('click', closeResultModal);
+    }
+    if (dom.resultModal) {
+      dom.resultModal.addEventListener('click', (event) => {
+        if (event.target === dom.resultModal) {
+          closeResultModal();
+        }
+      });
+    }
   }
 
   function openPack(packId, count) {
@@ -658,7 +801,31 @@
     state.stake[cardId] = next;
   }
 
+  function ensurePotTicker() {
+    if (potResolveTicker) {
+      return;
+    }
+    potResolveTicker = setInterval(() => {
+      if (!state.activePotRound) {
+        return;
+      }
+      if (Date.now() >= state.activePotRound.resolveAt) {
+        resolveActivePotRound();
+        return;
+      }
+      renderPotSummary();
+    }, 250);
+  }
+
   function startPotRound() {
+    if (state.activePotRound) {
+      pushLog('A pot round is already running. Wait for the timer to finish.', 'warning');
+      setActiveTab('pot');
+      renderAll();
+      return;
+    }
+
+    closeResultModal();
     syncStakeAgainstInventory();
     const playerValue = getMapValue(state.stake);
     if (!playerValue) {
@@ -673,11 +840,44 @@
     });
     state.stake = {};
 
-    const botEntries = createBotEntries(playerValue);
-    const participants = [{ name: 'You', value: playerValue, cards: playerCards, isPlayer: true }, ...botEntries];
+    const startedAt = Date.now();
+    const botEntries = createBotEntries(playerValue, startedAt);
+    const participants = [{ name: 'You', value: playerValue, cards: playerCards, isPlayer: true, joinAt: startedAt }, ...botEntries];
     const totalPotValue = participants.reduce((sum, participant) => sum + participant.value, 0);
-    const winner = pickWeighted(participants, (entry) => entry.value);
     const playerChance = playerValue / totalPotValue;
+    const resolveAt = startedAt + randomInt(7000, 10500);
+
+    state.activePotRound = {
+      at: startedAt,
+      resolveAt,
+      totalPotValue,
+      playerValue,
+      playerChance,
+      participants
+    };
+
+    pushLog(
+      `Pot round started. ${participants.length} players, total pot ${money(totalPotValue)}. Rolling...`,
+      'warning'
+    );
+    setActiveTab('pot');
+    checkAchievements();
+    saveState();
+    renderAll();
+  }
+
+  function resolveActivePotRound() {
+    if (!state.activePotRound) {
+      return;
+    }
+
+    const activeRound = state.activePotRound;
+    const participants = activeRound.participants;
+    const winner = pickWeighted(participants, (entry) => entry.value);
+    const totalPotValue = participants.reduce((sum, participant) => sum + participant.value, 0);
+    const playerValue = activeRound.playerValue;
+    const playerChance = playerValue / Math.max(1, totalPotValue);
+    const potCards = mergeMaps(participants.map((participant) => participant.cards));
 
     state.lastPotRound = {
       at: Date.now(),
@@ -688,20 +888,35 @@
       participants: participants.map((participant) => ({
         name: participant.name,
         value: participant.value,
-        isPlayer: participant.isPlayer
+        isPlayer: participant.isPlayer,
+        cards: cloneMap(participant.cards)
       }))
     };
 
+    state.activePotRound = null;
     if (winner.isPlayer) {
-      const potCards = mergeMaps(participants.map((participant) => participant.cards));
       Object.entries(potCards).forEach(([cardId, qty]) => {
         addCard(state.inventory, cardId, qty);
       });
+      const winnings = getMapValue(potCards);
       state.potWins += 1;
-      pushLog(`Pot won. You took ${money(totalPotValue)} in card value from ${botEntries.length} bots.`, 'positive');
+      state.totalPotWinnings += winnings;
+      pushLog(`Pot won! You scooped ${money(totalPotValue)} from ${participants.length - 1} opponents.`, 'positive');
+      openResultModal({
+        title: 'You Won the Pot!',
+        text: `You beat ${participants.length - 1} players and won ${money(totalPotValue)} in total card value.`,
+        cards: potCards,
+        tone: 'positive'
+      });
     } else {
       state.potLosses += 1;
       pushLog(`Pot lost to ${winner.name}. Your stake was ${money(playerValue)}.`, 'negative');
+      openResultModal({
+        title: 'You Lost This Round',
+        text: `${winner.name} won the pot. Your stake of ${money(playerValue)} was lost.`,
+        cards: null,
+        tone: 'negative'
+      });
     }
 
     advanceMarket(0.5, true);
@@ -710,7 +925,7 @@
     renderAll();
   }
 
-  function createBotEntries(playerValue) {
+  function createBotEntries(playerValue, startedAt) {
     const count = randomInt(2, 4);
     const names = shuffle([...BOT_NAMES]).slice(0, count);
     return names.map((name, index) => {
@@ -739,7 +954,8 @@
         name,
         value,
         cards,
-        isPlayer: false
+        isPlayer: false,
+        joinAt: startedAt + randomInt(900, 5200)
       };
     });
   }
@@ -852,6 +1068,7 @@
           <h3>${pack.name}</h3>
           <p>Cost: ${money(pack.cost)} | Cards: ${pack.cardsPerPack}</p>
           <p>Rare+: ${odds.rarePlus}% | Legendary+: ${odds.legendaryPlus}%</p>
+          <p>Mythic+: ${odds.mythicPlus}% | Contraband: ${odds.contraband}%</p>
           <div class="pack-actions">
             <button data-pack="${pack.id}" data-count="1">Open 1</button>
             <button data-pack="${pack.id}" data-count="5">Open 5</button>
@@ -983,9 +1200,13 @@
 
   function renderStake() {
     const entries = Object.entries(state.stake).filter(([, qty]) => qty > 0);
+    const roundRunning = Boolean(state.activePotRound);
+    dom.startPotRound.textContent = roundRunning ? 'Round Running...' : 'Start Pot Round';
     if (!entries.length) {
       dom.stakeList.innerHTML = '<p class="empty">No cards staked yet.</p>';
       dom.stakeValue.textContent = money(0);
+      dom.startPotRound.disabled = roundRunning;
+      dom.clearStake.disabled = roundRunning;
       return;
     }
 
@@ -1011,23 +1232,71 @@
       .join('');
 
     dom.stakeValue.textContent = money(getMapValue(state.stake));
+    dom.startPotRound.disabled = roundRunning;
+    dom.clearStake.disabled = roundRunning;
   }
 
   function renderPotSummary() {
+    if (state.activePotRound) {
+      const round = state.activePotRound;
+      const now = Date.now();
+      const msLeft = Math.max(0, round.resolveAt - now);
+      dom.potStateLabel.textContent = `Round live: ${round.participants.length} players in the pot`;
+      dom.potTimer.textContent = formatCountdown(msLeft);
+      const participantsHtml = round.participants
+        .map((entry) => {
+          const joined = entry.joinAt <= now;
+          const chance = (entry.value / Math.max(1, round.totalPotValue)) * 100;
+          if (!joined) {
+            return `
+              <article class="pot-player">
+                <h4>${entry.name}</h4>
+                <p>Joining in ${formatCountdown(entry.joinAt - now)}...</p>
+              </article>
+            `;
+          }
+          return `
+            <article class="pot-player">
+              <h4>${entry.name}</h4>
+              <p>Stake: ${money(entry.value)} (${chance.toFixed(2)}% chance)</p>
+              ${renderCardMapList(entry.cards, 5)}
+            </article>
+          `;
+        })
+        .join('');
+      dom.potSummary.innerHTML = `
+        <p class="round-line"><strong>Total Pot:</strong> ${money(round.totalPotValue)}</p>
+        <p class="round-line"><strong>Your Stake:</strong> ${money(round.playerValue)} (${(round.playerChance * 100).toFixed(2)}%)</p>
+        ${participantsHtml}
+      `;
+      return;
+    }
+
+    dom.potTimer.textContent = '00:00';
     if (!state.lastPotRound) {
+      dom.potStateLabel.textContent = 'Waiting for a round to start.';
       dom.potSummary.innerHTML = '<p>Start a round after adding cards to your stake.</p>';
       return;
     }
 
     const round = state.lastPotRound;
-    const lines = [];
-    lines.push(`<p class="round-line"><strong>Winner:</strong> ${round.winner}</p>`);
-    lines.push(`<p class="round-line"><strong>Total Pot:</strong> ${money(round.totalPotValue)}</p>`);
-    lines.push(`<p class="round-line"><strong>Your Stake:</strong> ${money(round.playerValue)} (${(round.playerChance * 100).toFixed(1)}% chance)</p>`);
-    round.participants.forEach((entry) => {
-      lines.push(`<p class="round-line">${entry.name}: ${money(entry.value)}</p>`);
-    });
-    dom.potSummary.innerHTML = lines.join('');
+    dom.potStateLabel.textContent = `Last round winner: ${round.winner}`;
+    const participantsHtml = round.participants
+      .map((entry) => `
+        <article class="pot-player">
+          <h4>${entry.name}</h4>
+          <p>Stake: ${money(entry.value)}</p>
+          ${entry.cards ? renderCardMapList(entry.cards, 4) : ''}
+        </article>
+      `)
+      .join('');
+
+    dom.potSummary.innerHTML = `
+      <p class="round-line"><strong>Winner:</strong> ${round.winner}</p>
+      <p class="round-line"><strong>Total Pot:</strong> ${money(round.totalPotValue)}</p>
+      <p class="round-line"><strong>Your Stake:</strong> ${money(round.playerValue)} (${(round.playerChance * 100).toFixed(2)}% chance)</p>
+      ${participantsHtml}
+    `;
   }
 
   function renderAchievements() {
@@ -1059,6 +1328,60 @@
         return `<li class="${entry.tone}"><time>${time}</time> ${entry.message}</li>`;
       })
       .join('');
+  }
+
+  function renderCardMapList(cardMap, limit) {
+    const list = Object.entries(cardMap || {})
+      .filter(([, qty]) => qty > 0)
+      .map(([cardId, qty]) => ({
+        cardId,
+        qty,
+        value: getCardUnitPrice(cardId) * qty
+      }))
+      .sort((a, b) => b.value - a.value);
+    if (!list.length) {
+      return '<p>No cards listed.</p>';
+    }
+    const visible = list.slice(0, limit);
+    const hiddenCount = Math.max(0, list.length - visible.length);
+    const lines = visible.map((entry) => `<li>${CATALOG[entry.cardId].cardname} x${entry.qty}</li>`).join('');
+    return `
+      <ul class="pot-card-list">
+        ${lines}
+        ${hiddenCount ? `<li>+${hiddenCount} more card stacks</li>` : ''}
+      </ul>
+    `;
+  }
+
+  function formatCountdown(ms) {
+    const safe = Math.max(0, Math.ceil(ms / 1000));
+    const minutes = Math.floor(safe / 60).toString().padStart(2, '0');
+    const seconds = (safe % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  }
+
+  function openResultModal(payload) {
+    if (!dom.resultModal) {
+      return;
+    }
+    dom.resultTitle.textContent = payload.title;
+    dom.resultText.textContent = payload.text;
+    if (payload.cards) {
+      const totalValue = getMapValue(payload.cards);
+      dom.resultLoot.innerHTML = `
+        <p><strong>Total Won:</strong> ${money(totalValue)}</p>
+        ${renderCardMapList(payload.cards, 10)}
+      `;
+    } else {
+      dom.resultLoot.innerHTML = '<p>No cards won this round.</p>';
+    }
+    dom.resultModal.removeAttribute('hidden');
+  }
+
+  function closeResultModal() {
+    if (dom.resultModal) {
+      dom.resultModal.setAttribute('hidden', '');
+    }
   }
 
   function exportSave() {
@@ -1101,6 +1424,7 @@
       return;
     }
     state = buildInitialState();
+    closeResultModal();
     pushLog('Progress reset. New run started.', 'negative');
     saveState();
     renderAll();
@@ -1108,6 +1432,30 @@
 
   function getNetWorth() {
     return state.balance + getMapValue(state.inventory);
+  }
+
+  function getNetWorthFromState(snapshot) {
+    const inventoryValue = Object.entries(snapshot.inventory || {}).reduce(
+      (sum, [cardId, qty]) => sum + getCardUnitPriceFromSnapshot(cardId, snapshot) * qty,
+      0
+    );
+    return (snapshot.balance || 0) + inventoryValue;
+  }
+
+  function getCardUnitPriceFromSnapshot(cardId, snapshot) {
+    const card = CATALOG[cardId];
+    if (!card) {
+      return 0;
+    }
+    const multiplier = (snapshot.market && snapshot.market[card.cardrareity]) || 1;
+    return Math.max(1, Math.round(card.cardworth * multiplier));
+  }
+
+  function hasPulledAtLeastRarity(highestPullId, rarityName) {
+    if (!highestPullId || !CATALOG[highestPullId]) {
+      return false;
+    }
+    return rarityRank(CATALOG[highestPullId].cardrareity) >= rarityRank(rarityName);
   }
 
   function getCardUnitPrice(cardId) {
@@ -1175,22 +1523,63 @@
   }
 
   function normalizeCardCatalog(rawCatalog) {
-    const output = {};
+    const draft = [];
     Object.entries(rawCatalog).forEach(([id, raw]) => {
       const rarity = normalizeRarity(raw.cardrareity || raw.cardrarity);
-      const chance = Number(raw.cardchance);
-      if (!rarity || !Number.isFinite(chance) || chance <= 0) {
+      if (!rarity) {
         return;
       }
-      output[id] = {
+      draft.push({
         id,
         cardname: String(raw.cardname || id),
         cardimg: String(raw.cardimg || ''),
         cardrareity: rarity,
-        cardworth: Math.max(1, Number(raw.cardworth) || 1),
-        cardchance: chance
-      };
+        rawWorth: Math.max(1, Number(raw.cardworth) || 1),
+        rawChance: Math.max(0.000001, Number(raw.cardchance) || 0.01)
+      });
     });
+
+    const groups = RARITY_ORDER.reduce((acc, rarity) => {
+      acc[rarity] = draft.filter((card) => card.cardrareity === rarity);
+      return acc;
+    }, {});
+
+    const availableSharesTotal = RARITY_ORDER.reduce((sum, rarity) => {
+      if (!groups[rarity].length) {
+        return sum;
+      }
+      return sum + RARITY_BALANCE_PROFILE[rarity].chanceShare;
+    }, 0) || 1;
+
+    const output = {};
+    RARITY_ORDER.forEach((rarity) => {
+      const group = groups[rarity];
+      if (!group.length) {
+        return;
+      }
+
+      const profile = RARITY_BALANCE_PROFILE[rarity];
+      const normalizedShare = profile.chanceShare / availableSharesTotal;
+      const chanceSum = group.reduce((sum, card) => sum + card.rawChance, 0) || 1;
+      const worthValues = group.map((card) => card.rawWorth);
+      const chanceValues = group.map((card) => card.rawChance);
+
+      group.forEach((card) => {
+        const worthPosition = getNormalizedPosition(card.rawWorth, worthValues);
+        const rarityPosition = 1 - getNormalizedPosition(card.rawChance, chanceValues);
+        const blend = clamp((worthPosition * 0.7) + (rarityPosition * 0.3), 0, 1);
+        const balancedWorth = Math.round(profile.minWorth + blend * (profile.maxWorth - profile.minWorth));
+        output[card.id] = {
+          id: card.id,
+          cardname: card.cardname,
+          cardimg: card.cardimg,
+          cardrareity: card.cardrareity,
+          cardworth: balancedWorth,
+          cardchance: normalizedShare * (card.rawChance / chanceSum)
+        };
+      });
+    });
+
     return output;
   }
 
@@ -1213,7 +1602,7 @@
     });
     const total = weights.reduce((sum, entry) => sum + entry.weight, 0);
     if (!total) {
-      return { rarePlus: 0, legendaryPlus: 0 };
+      return { rarePlus: 0, legendaryPlus: 0, mythicPlus: 0, contraband: 0 };
     }
     const rarePlusWeight = weights
       .filter((entry) => rarityRank(entry.rarity) >= rarityRank('Rare'))
@@ -1221,9 +1610,17 @@
     const legendaryPlusWeight = weights
       .filter((entry) => rarityRank(entry.rarity) >= rarityRank('Legendary'))
       .reduce((sum, entry) => sum + entry.weight, 0);
+    const mythicPlusWeight = weights
+      .filter((entry) => rarityRank(entry.rarity) >= rarityRank('Mythic'))
+      .reduce((sum, entry) => sum + entry.weight, 0);
+    const contrabandWeight = weights
+      .filter((entry) => entry.rarity === 'Contraband')
+      .reduce((sum, entry) => sum + entry.weight, 0);
     return {
       rarePlus: (100 * rarePlusWeight / total).toFixed(2),
-      legendaryPlus: (100 * legendaryPlusWeight / total).toFixed(2)
+      legendaryPlus: (100 * legendaryPlusWeight / total).toFixed(3),
+      mythicPlus: (100 * mythicPlusWeight / total).toFixed(4),
+      contraband: (100 * contrabandWeight / total).toFixed(5)
     };
   }
 
@@ -1258,6 +1655,15 @@
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
+  }
+
+  function getNormalizedPosition(value, list) {
+    const min = Math.min(...list);
+    const max = Math.max(...list);
+    if (max <= min) {
+      return 0.5;
+    }
+    return clamp((value - min) / (max - min), 0, 1);
   }
 
   function cloneMap(map) {
@@ -1306,13 +1712,15 @@
       soldValue: 0,
       potWins: 0,
       potLosses: 0,
+      totalPotWinnings: 0,
       market: buildInitialMarket(),
       unlockedAchievements: [],
       logs: [],
       highestPullId: null,
       lastPullId: null,
       recentPulls: [],
-      lastPotRound: null
+      lastPotRound: null,
+      activePotRound: null
     };
   }
 
@@ -1362,6 +1770,7 @@
     next.soldValue = Math.max(0, Number(candidate.soldValue) || 0);
     next.potWins = Math.max(0, Number(candidate.potWins) || 0);
     next.potLosses = Math.max(0, Number(candidate.potLosses) || 0);
+    next.totalPotWinnings = Math.max(0, Number(candidate.totalPotWinnings) || 0);
 
     next.inventory = sanitizeMap(candidate.inventory);
     next.stake = sanitizeMap(candidate.stake);
@@ -1395,6 +1804,9 @@
 
     if (candidate.lastPotRound && typeof candidate.lastPotRound === 'object') {
       next.lastPotRound = sanitizeLastPotRound(candidate.lastPotRound);
+    }
+    if (candidate.activePotRound && typeof candidate.activePotRound === 'object') {
+      next.activePotRound = sanitizeActivePotRound(candidate.activePotRound);
     }
 
     syncStakeMap(next);
@@ -1444,9 +1856,41 @@
         .map((entry) => ({
           name: entry.name,
           value: Math.max(0, Number(entry.value) || 0),
-          isPlayer: Boolean(entry.isPlayer)
+          isPlayer: Boolean(entry.isPlayer),
+          cards: sanitizeMap(entry.cards)
         }));
     }
+    return safe;
+  }
+
+  function sanitizeActivePotRound(candidate) {
+    const safe = {
+      at: Number(candidate.at) || Date.now(),
+      resolveAt: Math.max(Date.now(), Number(candidate.resolveAt) || Date.now()),
+      totalPotValue: Math.max(0, Number(candidate.totalPotValue) || 0),
+      playerValue: Math.max(0, Number(candidate.playerValue) || 0),
+      playerChance: clamp(Number(candidate.playerChance) || 0, 0, 1),
+      participants: []
+    };
+
+    if (Array.isArray(candidate.participants)) {
+      safe.participants = candidate.participants
+        .filter((entry) => entry && typeof entry.name === 'string')
+        .map((entry) => ({
+          name: entry.name,
+          value: Math.max(0, Number(entry.value) || 0),
+          isPlayer: Boolean(entry.isPlayer),
+          cards: sanitizeMap(entry.cards),
+          joinAt: Math.max(safe.at, Number(entry.joinAt) || safe.at)
+        }));
+    }
+    if (!safe.participants.length) {
+      return null;
+    }
+    safe.totalPotValue = safe.participants.reduce((sum, entry) => sum + entry.value, 0);
+    const playerEntry = safe.participants.find((entry) => entry.isPlayer) || safe.participants[0];
+    safe.playerValue = playerEntry ? playerEntry.value : safe.playerValue;
+    safe.playerChance = safe.playerValue / Math.max(1, safe.totalPotValue);
     return safe;
   }
 

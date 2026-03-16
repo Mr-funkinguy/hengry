@@ -392,6 +392,48 @@ tbody tr:hover {
   gap: 0.8rem;
 }
 
+.pot-statusbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 11px;
+  background: rgba(8, 17, 24, 0.62);
+  padding: 0.56rem 0.68rem;
+}
+
+.pot-statusbar p {
+  margin: 0;
+  color: #f2d0aa;
+  font-size: 0.9rem;
+}
+
+.pot-timer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(9, 21, 30, 0.75);
+}
+
+.pot-timer-chip span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pot-timer-chip strong {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.05rem;
+  color: #ffd8ad;
+}
+
 .pot-col {
   border: 1px solid rgba(255, 255, 255, 0.11);
   border-radius: 12px;
@@ -443,6 +485,83 @@ tbody tr:hover {
   margin: 0 0 0.48rem;
   padding-bottom: 0.36rem;
   border-bottom: 1px dashed rgba(255, 255, 255, 0.14);
+}
+
+.pot-player {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9px;
+  padding: 0.45rem;
+  margin-bottom: 0.45rem;
+  background: rgba(9, 20, 29, 0.76);
+}
+
+.pot-player h4 {
+  margin: 0 0 0.2rem;
+  font-size: 0.9rem;
+}
+
+.pot-player p {
+  margin: 0.12rem 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.pot-card-list {
+  margin: 0.35rem 0 0;
+  padding-left: 1rem;
+  font-size: 0.78rem;
+}
+
+.pot-card-list li {
+  margin-bottom: 0.1rem;
+}
+
+.result-modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(3, 8, 12, 0.72);
+  z-index: 40;
+}
+
+.result-modal[hidden] {
+  display: none;
+}
+
+.result-card {
+  width: min(560px, 100%);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(170deg, rgba(12, 26, 35, 0.97), rgba(8, 14, 20, 0.97));
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.4);
+  padding: 0.95rem;
+}
+
+.result-card h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #ffe0b9;
+}
+
+.result-card p {
+  margin: 0.45rem 0;
+  color: #d8e7f3;
+}
+
+.result-loot {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: rgba(5, 12, 18, 0.7);
+  padding: 0.65rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.close-result {
+  float: right;
+  margin-left: 0.65rem;
 }
 
 .achievement-list {

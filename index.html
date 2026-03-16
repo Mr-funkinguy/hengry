@@ -120,6 +120,13 @@
             <h2>Pot Arena</h2>
             <p>Stake cards against fake players. Winner takes the full pot.</p>
           </div>
+          <div class="pot-statusbar">
+            <p id="pot-state-label">Waiting for a round to start.</p>
+            <div class="pot-timer-chip">
+              <span>Timer</span>
+              <strong id="pot-timer">00:00</strong>
+            </div>
+          </div>
           <div class="pot-layout">
             <article class="pot-col">
               <h3>Your Stake</h3>
@@ -168,6 +175,15 @@
       <button id="import-save">Import Save</button>
       <button id="reset-game" class="danger">Reset Progress</button>
     </footer>
+  </div>
+
+  <div id="result-modal" class="result-modal" hidden>
+    <div class="result-card">
+      <button id="close-result" class="close-result" aria-label="Close result">Close</button>
+      <h3 id="result-title">Round Result</h3>
+      <p id="result-text"></p>
+      <div id="result-loot" class="result-loot"></div>
+    </div>
   </div>
 
   <script src="app.js"></script>
