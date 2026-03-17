@@ -2365,7 +2365,7 @@
 
   function buildInitialState() {
     return {
-      balance: 500,
+      balance: 2000,
       inventory: {},
       stake: {},
       packsOpened: 0,
