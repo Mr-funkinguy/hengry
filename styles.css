@@ -24,7 +24,7 @@
 html,
 body {
   margin: 0;
-  min-height: 100%;
+  height: 100%;
 }
 
 body {
@@ -34,7 +34,7 @@ body {
     radial-gradient(circle at 8% 10%, rgba(240, 127, 47, 0.22), transparent 38%),
     radial-gradient(circle at 92% 80%, rgba(58, 141, 184, 0.22), transparent 35%),
     linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 body::before {
@@ -49,10 +49,12 @@ body::before {
 }
 
 .app-shell {
-  width: min(1200px, 96%);
-  margin: 1.3rem auto 2rem;
+  width: min(1320px, 97%);
+  height: calc(100vh - 1rem);
+  margin: 0.5rem auto;
   display: grid;
-  gap: 1rem;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 0.72rem;
 }
 
 .panel {
@@ -108,7 +110,10 @@ body::before {
 
 .layout {
   display: grid;
-  gap: 1rem;
+  gap: 0.72rem;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
 }
 
 .tab-nav {
@@ -130,10 +135,39 @@ body::before {
 .tab-panel {
   display: grid;
   gap: 1rem;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .tab-panel[hidden] {
   display: none;
+}
+
+.tab-panel > .panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#tab-main {
+  grid-template-rows: minmax(0, 0.95fr) minmax(0, 1.15fr);
+}
+
+#tab-main > .panel:first-child {
+  overflow: auto;
+}
+
+#tab-main > .panel:last-child .table-wrap {
+  min-height: 0;
+  flex: 1;
+}
+
+#tab-pot > .panel,
+#tab-shop > .panel,
+#tab-achievements > .panel,
+#tab-events > .panel {
+  overflow: hidden;
 }
 
 .section-head h2 {
@@ -333,6 +367,7 @@ select {
 .table-wrap {
   width: 100%;
   overflow-x: auto;
+  overflow-y: auto;
 }
 
 table {
@@ -396,8 +431,10 @@ tbody tr:hover {
 
 .pot-layout {
   display: grid;
-  grid-template-columns: minmax(260px, 0.9fr) minmax(380px, 1.45fr);
+  grid-template-columns: minmax(320px, 0.82fr) minmax(440px, 1.55fr);
   gap: 0.8rem;
+  min-height: 0;
+  flex: 1;
 }
 
 .pot-statusbar {
@@ -443,10 +480,14 @@ tbody tr:hover {
 }
 
 .pot-col {
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 12px;
-  padding: 0.7rem;
-  background: rgba(8, 17, 24, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 13px;
+  padding: 0.75rem;
+  background:
+    linear-gradient(160deg, rgba(15, 31, 41, 0.86), rgba(8, 17, 24, 0.82));
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .pot-col h3 {
@@ -456,33 +497,50 @@ tbody tr:hover {
 .stake-list,
 .pot-summary {
   min-height: 220px;
-  max-height: 480px;
+  max-height: none;
   overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 9px;
-  padding: 0.5rem;
-  background: rgba(7, 11, 16, 0.58);
+  padding: 0.58rem;
+  background: rgba(5, 10, 15, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  flex: 1;
+  min-height: 0;
 }
 
 .pot-summary-col .pot-summary {
-  min-height: 320px;
+  min-height: 360px;
 }
 
 .stake-item {
   display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 0.48rem;
+  grid-template-columns: 1fr auto;
+  gap: 0.52rem;
   align-items: center;
-  margin-bottom: 0.42rem;
+  margin-bottom: 0.48rem;
+  padding: 0.38rem 0.42rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(13, 24, 32, 0.78);
 }
 
 .stake-item small {
   color: var(--muted);
 }
 
+.stake-meta strong {
+  font-size: 0.9rem;
+}
+
+.stake-meta small {
+  font-size: 0.74rem;
+}
+
 .stake-controls {
   display: flex;
   gap: 0.3rem;
+  justify-content: end;
+  flex-wrap: wrap;
 }
 
 .stake-controls button {
@@ -594,6 +652,11 @@ tbody tr:hover {
   box-shadow: inset 0 0 0 1px rgba(76, 180, 122, 0.42);
 }
 
+.achievement-card.penalty {
+  border-color: rgba(223, 76, 63, 0.86);
+  box-shadow: inset 0 0 0 1px rgba(223, 76, 63, 0.46);
+}
+
 .achievement-card h4 {
   margin: 0 0 0.22rem;
   font-size: 0.92rem;
@@ -609,7 +672,9 @@ tbody tr:hover {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-height: 220px;
+  max-height: none;
+  min-height: 0;
+  flex: 1;
   overflow-y: auto;
 }
 
@@ -650,6 +715,8 @@ tbody tr:hover {
   gap: 0.8rem;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   margin-bottom: 0.8rem;
+  min-height: 0;
+  flex: 1;
 }
 
 .shop-col {
@@ -666,6 +733,9 @@ tbody tr:hover {
 .shop-list {
   display: grid;
   gap: 0.52rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.15rem;
 }
 
 .shop-item {
@@ -698,6 +768,16 @@ tbody tr:hover {
   color: #f3d7b6;
 }
 
+.rebirth-card {
+  flex-shrink: 0;
+}
+
+#tab-achievements .achievement-list {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.15rem;
+}
+
 .empty {
   color: var(--muted);
   text-align: center;
@@ -706,9 +786,31 @@ tbody tr:hover {
 }
 
 @media (max-width: 760px) {
+  body {
+    overflow: auto;
+  }
+
   .app-shell {
     width: 97%;
+    height: auto;
     margin-top: 0.8rem;
+  }
+
+  .layout {
+    grid-template-rows: auto auto;
+    overflow: visible;
+  }
+
+  .tab-panel {
+    overflow: visible;
+  }
+
+  .tab-panel > .panel {
+    overflow: visible;
+  }
+
+  #tab-main {
+    grid-template-rows: auto auto;
   }
 
   .panel {
@@ -721,6 +823,14 @@ tbody tr:hover {
 
   .pot-layout {
     grid-template-columns: 1fr;
+  }
+
+  .stake-list,
+  .pot-summary,
+  #tab-achievements .achievement-list,
+  .event-feed,
+  .shop-list {
+    max-height: 320px;
   }
 
   button {

@@ -22,142 +22,150 @@
   };
 
   const RARITY_BALANCE_PROFILE = {
-    Common: { chanceShare: 0.79, minWorth: 10, maxWorth: 35 },
-    Uncommon: { chanceShare: 0.16, minWorth: 40, maxWorth: 250 },
-    Rare: { chanceShare: 0.04, minWorth: 300, maxWorth: 8000 },
-    Epic: { chanceShare: 0.008, minWorth: 8000, maxWorth: 350000 },
-    Legendary: { chanceShare: 0.0017, minWorth: 250000, maxWorth: 8500000 },
-    Mythic: { chanceShare: 0.00025, minWorth: 12000000, maxWorth: 650000000 },
-    Contraband: { chanceShare: 0.00005, minWorth: 900000000, maxWorth: 9000000000 }
+    Common: { chanceShare: 0.89, minWorth: 6, maxWorth: 18 },
+    Uncommon: { chanceShare: 0.1035, minWorth: 22, maxWorth: 90 },
+    Rare: { chanceShare: 0.0053, minWorth: 120, maxWorth: 2200 },
+    Epic: { chanceShare: 0.001, minWorth: 3500, maxWorth: 120000 },
+    Legendary: { chanceShare: 0.00017, minWorth: 350000, maxWorth: 12000000 },
+    Mythic: { chanceShare: 0.000026, minWorth: 8000000, maxWorth: 550000000 },
+    Contraband: { chanceShare: 0.000004, minWorth: 1200000000, maxWorth: 9000000000 }
   };
 
   const PACK_TYPES = [
     {
       id: 'street-crate',
       name: 'Street Crate',
-      cost: 40,
+      cost: 120,
       unlockCost: 0,
       cardsPerPack: 3,
+      luckScale: 0.15,
       rarityBoost: {
-        Common: 1,
-        Uncommon: 1,
-        Rare: 1,
-        Epic: 1,
-        Legendary: 1,
-        Mythic: 1,
-        Contraband: 1
+        Common: 1.16,
+        Uncommon: 0.9,
+        Rare: 0.34,
+        Epic: 0.12,
+        Legendary: 0.03,
+        Mythic: 0.01,
+        Contraband: 0.002
       }
     },
     {
       id: 'tactical-case',
       name: 'Tactical Case',
-      cost: 130,
-      unlockCost: 1200,
+      cost: 420,
+      unlockCost: 5000,
       cardsPerPack: 4,
+      luckScale: 0.28,
       rarityBoost: {
-        Common: 0.84,
-        Uncommon: 1.05,
-        Rare: 1.35,
-        Epic: 1.65,
-        Legendary: 1.95,
-        Mythic: 2.25,
-        Contraband: 2.6
+        Common: 1.05,
+        Uncommon: 0.98,
+        Rare: 0.6,
+        Epic: 0.3,
+        Legendary: 0.11,
+        Mythic: 0.03,
+        Contraband: 0.006
       }
     },
     {
       id: 'black-vault',
       name: 'Black Vault',
-      cost: 480,
-      unlockCost: 6800,
+      cost: 1700,
+      unlockCost: 32000,
       cardsPerPack: 5,
+      luckScale: 0.42,
       rarityBoost: {
-        Common: 0.58,
-        Uncommon: 0.9,
-        Rare: 1.6,
-        Epic: 2.2,
-        Legendary: 3,
-        Mythic: 3.8,
-        Contraband: 4.6
+        Common: 0.92,
+        Uncommon: 1.02,
+        Rare: 0.95,
+        Epic: 0.6,
+        Legendary: 0.24,
+        Mythic: 0.08,
+        Contraband: 0.015
       }
     },
     {
       id: 'omega-safe',
       name: 'Omega Safe',
-      cost: 1600,
-      unlockCost: 28000,
+      cost: 6500,
+      unlockCost: 170000,
       cardsPerPack: 6,
+      luckScale: 0.58,
       rarityBoost: {
-        Common: 0.4,
-        Uncommon: 0.72,
-        Rare: 1.45,
-        Epic: 2.7,
-        Legendary: 4,
-        Mythic: 5.4,
-        Contraband: 7.2
+        Common: 0.78,
+        Uncommon: 0.92,
+        Rare: 1.25,
+        Epic: 1.05,
+        Legendary: 0.5,
+        Mythic: 0.16,
+        Contraband: 0.03
       }
     },
     {
       id: 'diamond-treasury',
       name: 'Diamond Treasury',
-      cost: 5800,
-      unlockCost: 120000,
+      cost: 24000,
+      unlockCost: 980000,
       cardsPerPack: 7,
+      luckScale: 0.72,
       rarityBoost: {
-        Common: 0.22,
-        Uncommon: 0.52,
-        Rare: 1.35,
-        Epic: 3.2,
-        Legendary: 5.1,
-        Mythic: 7.2,
-        Contraband: 10.5
+        Common: 0.58,
+        Uncommon: 0.82,
+        Rare: 1.65,
+        Epic: 1.95,
+        Legendary: 1.15,
+        Mythic: 0.44,
+        Contraband: 0.09
       }
     },
     {
       id: 'void-arsenal',
       name: 'Void Arsenal',
-      cost: 22000,
-      unlockCost: 480000,
+      cost: 90000,
+      unlockCost: 6200000,
       cardsPerPack: 8,
+      luckScale: 0.86,
       rarityBoost: {
-        Common: 0.12,
-        Uncommon: 0.32,
-        Rare: 1.1,
-        Epic: 3.8,
-        Legendary: 6.7,
-        Mythic: 10.5,
-        Contraband: 16.4
+        Common: 0.42,
+        Uncommon: 0.72,
+        Rare: 2.05,
+        Epic: 3.1,
+        Legendary: 2.05,
+        Mythic: 0.92,
+        Contraband: 0.22
       }
     },
     {
       id: 'singularity-core',
       name: 'Singularity Core',
-      cost: 90000,
-      unlockCost: 1900000,
+      cost: 620000,
+      unlockCost: 42000000,
       cardsPerPack: 9,
+      luckScale: 1,
       rarityBoost: {
-        Common: 0.05,
-        Uncommon: 0.2,
-        Rare: 0.85,
-        Epic: 4.4,
-        Legendary: 8.4,
-        Mythic: 14.8,
-        Contraband: 25
+        Common: 0.2,
+        Uncommon: 0.44,
+        Rare: 2.8,
+        Epic: 5.2,
+        Legendary: 5.2,
+        Mythic: 3,
+        Contraband: 1
       }
     },
     {
       id: 'godmode-reliquary',
       name: 'Godmode Reliquary',
-      cost: 350000,
-      unlockCost: 8500000,
+      cost: 2800000,
+      unlockCost: 300000000,
       cardsPerPack: 10,
+      luckScale: 1.12,
       rarityBoost: {
-        Common: 0.01,
-        Uncommon: 0.06,
-        Rare: 0.45,
-        Epic: 3.8,
-        Legendary: 9.5,
-        Mythic: 20.5,
-        Contraband: 45
+        Common: 0.1,
+        Uncommon: 0.28,
+        Rare: 3.2,
+        Epic: 7.2,
+        Legendary: 8.5,
+        Mythic: 6.2,
+        Contraband: 2.6
       }
     }
   ];
@@ -175,14 +183,29 @@
     'DiceFang',
     'CoinWraith',
     'ScrapOracle',
-    'ChromeViper'
+    'ChromeViper',
+    'TiltedTitan',
+    'PotRaccoon',
+    'RiskMonkey',
+    'CaseBrawler',
+    'StackSniper',
+    'NeonBandit',
+    'OddsReaper',
+    'LoopNinja',
+    'StakeGhost',
+    'TurboLurker',
+    'CratePhantom',
+    'HexMarauder',
+    'ShoveShark',
+    'CoinDrifter',
+    'TraceRaptor'
   ];
 
   const SHOP_UPGRADES = [
     {
       id: 'crateLuck',
       title: 'Crate Calibration',
-      description: 'Boost Rare+ pull weight in all owned crates.',
+      description: 'Boost Rare+ pull weight (stronger effect on higher-tier crates).',
       baseCost: 2500,
       growth: 2.05,
       maxLevel: 8
@@ -205,7 +228,9 @@
     }
   ];
 
-  const REBIRTH_BASE_REQUIREMENT = 250000;
+  const REBIRTH_BASE_REQUIREMENT = 3000000;
+  const AUTO_CLICKER_WINDOW_MS = 6500;
+  const AUTO_CLICKER_MIN_CLICKS = 18;
 
   const CARD_RARITY_SYSTEM = {
     'freaky henry': {
@@ -434,6 +459,15 @@
       description: 'Reach $100,000 net worth.',
       reward: 7000,
       condition: (s) => getNetWorthFromState(s) >= 100000
+    },
+    {
+      id: 'cheater-flagged',
+      title: 'Cheater',
+      description: 'Auto-clicker detected. Balance penalty applied.',
+      reward: 0,
+      rewardLabel: '-50% balance',
+      tone: 'negative',
+      condition: (s) => Boolean(s.cheaterDetected)
     }
   ];
 
@@ -469,6 +503,7 @@
     sortBy: byId('sort-by'),
     sellDuplicates: byId('sell-duplicates'),
     sellCommons: byId('sell-commons'),
+    sellAllTop: byId('sell-all-top'),
     stakeAllTop: byId('stake-all-top'),
     inventoryBody: byId('inventory-body'),
     stakeList: byId('stake-list'),
@@ -505,6 +540,7 @@
   let state = loadState();
   let activeTab = loadActiveTab();
   let potResolveTicker = null;
+  let packClickHistory = [];
 
   init();
 
@@ -559,6 +595,8 @@
     });
 
     state.rebirths = Math.max(0, Math.floor(Number(state.rebirths) || 0));
+    state.cheaterDetected = Boolean(state.cheaterDetected);
+    state.cheaterPenaltyApplied = Boolean(state.cheaterPenaltyApplied);
   }
 
   function getPackById(packId) {
@@ -574,6 +612,51 @@
 
   function isPackOwned(packId) {
     return state.ownedPacks.includes(packId);
+  }
+
+  function registerPackClickInput() {
+    if (state.cheaterPenaltyApplied) {
+      return;
+    }
+    const now = Date.now();
+    packClickHistory.push(now);
+    packClickHistory = packClickHistory.filter((time) => now - time <= AUTO_CLICKER_WINDOW_MS);
+
+    if (packClickHistory.length < AUTO_CLICKER_MIN_CLICKS) {
+      return;
+    }
+
+    const recent = packClickHistory.slice(-12);
+    if (recent.length < 12) {
+      return;
+    }
+    const intervals = [];
+    for (let i = 1; i < recent.length; i += 1) {
+      intervals.push(recent[i] - recent[i - 1]);
+    }
+    const avg = intervals.reduce((sum, value) => sum + value, 0) / intervals.length;
+    const variance = intervals.reduce((sum, value) => sum + ((value - avg) ** 2), 0) / intervals.length;
+    const stdDev = Math.sqrt(variance);
+    const burstClicks = packClickHistory.length >= 28 && (now - packClickHistory[0]) <= AUTO_CLICKER_WINDOW_MS;
+    const machineRhythm = avg <= 145 && stdDev <= 28;
+
+    if (burstClicks || machineRhythm) {
+      triggerCheaterPenalty();
+    }
+  }
+
+  function triggerCheaterPenalty() {
+    if (state.cheaterPenaltyApplied) {
+      return;
+    }
+    state.cheaterDetected = true;
+    state.cheaterPenaltyApplied = true;
+    const penalty = Math.floor(state.balance * 0.5);
+    state.balance = Math.max(0, state.balance - penalty);
+    pushLog(`Cheater detected: auto-clicker pattern flagged. Balance penalized ${money(penalty)} (-50%).`, 'negative');
+    checkAchievements();
+    saveState();
+    renderAll();
   }
 
   function initTabs() {
@@ -637,6 +720,7 @@
       if (!button) {
         return;
       }
+      registerPackClickInput();
       const packId = button.dataset.pack;
       const count = toInt(button.dataset.count, 1);
       openPack(packId, count);
@@ -659,6 +743,7 @@
     }
 
     dom.openBest.addEventListener('click', () => {
+      registerPackClickInput();
       const affordable = getOwnedPacks().filter((pack) => state.balance >= pack.cost).sort((a, b) => b.cost - a.cost)[0];
       if (!affordable) {
         pushLog('No pack is affordable right now.', 'negative');
@@ -668,7 +753,10 @@
       openPack(affordable.id, 1);
     });
 
-    dom.openTen.addEventListener('click', () => openPack(state.activePackId, 10));
+    dom.openTen.addEventListener('click', () => {
+      registerPackClickInput();
+      openPack(state.activePackId, 10);
+    });
     dom.advanceMarket.addEventListener('click', () => {
       advanceMarket(0.8, false);
       saveState();
@@ -688,6 +776,7 @@
 
     dom.sellDuplicates.addEventListener('click', sellDuplicates);
     dom.sellCommons.addEventListener('click', () => sellAllByRarity('Common'));
+    dom.sellAllTop.addEventListener('click', sellAllSellableCards);
     dom.stakeAllTop.addEventListener('click', stakeAllSellableCards);
 
     dom.stakeList.addEventListener('click', (event) => {
@@ -795,7 +884,8 @@
 
   function drawCardFromPack(pack, options) {
     const applyPlayerLuck = !options || options.applyPlayerLuck !== false;
-    const crateLuckMultiplier = applyPlayerLuck ? getCrateLuckMultiplier() : 1;
+    const rawLuckMultiplier = applyPlayerLuck ? getCrateLuckMultiplier() : 1;
+    const crateLuckMultiplier = getPackLuckMultiplier(pack, rawLuckMultiplier);
     const weighted = CARD_IDS.map((id) => {
       const card = CATALOG[id];
       const boost = pack.rarityBoost[card.cardrareity] || 1;
@@ -913,6 +1003,26 @@
       pushLog(`No ${rarity} cards available to sell.`, 'warning');
     } else {
       pushLog(`Sold ${soldCount} ${rarity} cards for ${money(gained)}.`, 'positive');
+    }
+    saveState();
+    renderAll();
+  }
+
+  function sellAllSellableCards() {
+    let gained = 0;
+    let soldCount = 0;
+    CARD_IDS.forEach((cardId) => {
+      const sellable = getSellableQuantity(cardId);
+      if (!sellable) {
+        return;
+      }
+      gained += sellCard(cardId, sellable);
+      soldCount += sellable;
+    });
+    if (!soldCount) {
+      pushLog('No sellable cards to liquidate.', 'warning');
+    } else {
+      pushLog(`Sold ${soldCount} cards for ${money(gained)}.`, 'positive');
     }
     saveState();
     renderAll();
@@ -1191,7 +1301,11 @@
   }
 
   function createBotEntries(playerValue, startedAt) {
-    const count = randomInt(2, 4);
+    const count = playerValue >= 50000000
+      ? randomInt(9, 13)
+      : playerValue >= 500000
+        ? randomInt(7, 10)
+        : randomInt(5, 8);
     const names = shuffle([...BOT_NAMES]).slice(0, count);
     return names.map((name, index) => {
       const aggression = 0.55 + Math.random() * 1.25;
@@ -1279,8 +1393,12 @@
         return;
       }
       state.unlockedAchievements.push(achievement.id);
-      state.balance += achievement.reward;
-      pushLog(`Achievement unlocked: ${achievement.title} (+${money(achievement.reward)}).`, 'positive');
+      const reward = Number(achievement.reward) || 0;
+      if (reward !== 0) {
+        state.balance += reward;
+      }
+      const rewardText = reward > 0 ? ` (+${money(reward)})` : reward < 0 ? ` (-${money(Math.abs(reward))})` : '';
+      pushLog(`Achievement unlocked: ${achievement.title}${rewardText}.`, achievement.tone || (reward < 0 ? 'negative' : 'positive'));
     });
   }
 
@@ -1510,15 +1628,15 @@
         const total = getCardUnitPrice(cardId) * qty;
         return `
           <div class="stake-item">
-            <div>
+            <div class="stake-meta">
               <strong>${card.cardname}</strong><br>
               <small>${card.cardrareity} | ${qty}x | ${money(total)}</small>
             </div>
             <div class="stake-controls">
               <button data-stake-action="minus" data-id="${cardId}">-</button>
               <button data-stake-action="plus" data-id="${cardId}">+</button>
+              <button data-stake-action="remove" data-id="${cardId}">Remove</button>
             </div>
-            <button data-stake-action="remove" data-id="${cardId}">Remove</button>
           </div>
         `;
       })
@@ -1673,11 +1791,16 @@
   function renderAchievements() {
     dom.achievementList.innerHTML = ACHIEVEMENTS.map((achievement) => {
       const unlocked = state.unlockedAchievements.includes(achievement.id);
+      const cardClass = [
+        'achievement-card',
+        unlocked ? 'unlocked' : '',
+        unlocked && achievement.tone === 'negative' ? 'penalty' : ''
+      ].filter(Boolean).join(' ');
       return `
-        <article class="achievement-card ${unlocked ? 'unlocked' : ''}">
+        <article class="${cardClass}">
           <h4>${achievement.title}</h4>
           <p>${achievement.description}</p>
-          <p>Reward: ${money(achievement.reward)}</p>
+          <p>Reward: ${achievement.rewardLabel || money(achievement.reward)}</p>
           <p>Status: ${unlocked ? 'Unlocked' : 'Locked'}</p>
         </article>
       `;
@@ -1837,6 +1960,13 @@
     return Math.round(upgrade.baseCost * Math.pow(upgrade.growth, currentLevel));
   }
 
+  function getPackLuckMultiplier(pack, rawMultiplier) {
+    const base = Math.max(1, Number(rawMultiplier) || 1);
+    const parsedScale = Number(pack && pack.luckScale);
+    const scale = Number.isFinite(parsedScale) ? clamp(parsedScale, 0, 1.5) : 1;
+    return 1 + (base - 1) * scale;
+  }
+
   function sanitizeUpgradeMap(candidate) {
     const map = {};
     SHOP_UPGRADES.forEach((upgrade) => {
@@ -1847,7 +1977,7 @@
   }
 
   function getCrateLuckMultiplier() {
-    return 1 + getUpgradeLevel('crateLuck') * 0.08 + state.rebirths * 0.03;
+    return 1 + getUpgradeLevel('crateLuck') * 0.045 + state.rebirths * 0.018;
   }
 
   function getPotLuckMultiplier() {
@@ -2011,7 +2141,7 @@
   }
 
   function computePackOdds(pack, crateLuckMultiplier) {
-    const rareBoost = Math.max(1, Number(crateLuckMultiplier) || 1);
+    const rareBoost = getPackLuckMultiplier(pack, crateLuckMultiplier);
     const weights = CARD_IDS.map((id) => {
       const card = CATALOG[id];
       const boost = pack.rarityBoost[card.cardrareity] || 1;
@@ -2145,7 +2275,9 @@
       lastPullId: null,
       recentPulls: [],
       lastPotRound: null,
-      activePotRound: null
+      activePotRound: null,
+      cheaterDetected: false,
+      cheaterPenaltyApplied: false
     };
   }
 
@@ -2197,6 +2329,8 @@
     next.potLosses = Math.max(0, Number(candidate.potLosses) || 0);
     next.totalPotWinnings = Math.max(0, Number(candidate.totalPotWinnings) || 0);
     next.rebirths = Math.max(0, Math.floor(Number(candidate.rebirths) || 0));
+    next.cheaterDetected = Boolean(candidate.cheaterDetected);
+    next.cheaterPenaltyApplied = Boolean(candidate.cheaterPenaltyApplied);
     next.upgrades = sanitizeUpgradeMap(candidate.upgrades);
     next.ownedPacks = sanitizeOwnedPacks(candidate.ownedPacks);
     next.activePackId = (typeof candidate.activePackId === 'string' && PACK_BY_ID[candidate.activePackId])
