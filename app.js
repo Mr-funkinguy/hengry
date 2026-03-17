@@ -38,15 +38,15 @@
       cost: 120,
       unlockCost: 0,
       cardsPerPack: 3,
-      luckScale: 0.15,
+      luckScale: 0.08,
       rarityBoost: {
-        Common: 1.16,
-        Uncommon: 0.9,
-        Rare: 0.34,
-        Epic: 0.12,
-        Legendary: 0.03,
-        Mythic: 0.01,
-        Contraband: 0.002
+        Common: 1.22,
+        Uncommon: 0.88,
+        Rare: 0.16,
+        Epic: 0.025,
+        Legendary: 0.004,
+        Mythic: 0.001,
+        Contraband: 0.00015
       }
     },
     {
@@ -55,15 +55,15 @@
       cost: 420,
       unlockCost: 5000,
       cardsPerPack: 4,
-      luckScale: 0.28,
+      luckScale: 0.16,
       rarityBoost: {
-        Common: 1.05,
-        Uncommon: 0.98,
-        Rare: 0.6,
-        Epic: 0.3,
-        Legendary: 0.11,
-        Mythic: 0.03,
-        Contraband: 0.006
+        Common: 1.1,
+        Uncommon: 0.96,
+        Rare: 0.34,
+        Epic: 0.12,
+        Legendary: 0.03,
+        Mythic: 0.008,
+        Contraband: 0.0015
       }
     },
     {
@@ -72,15 +72,15 @@
       cost: 1700,
       unlockCost: 32000,
       cardsPerPack: 5,
-      luckScale: 0.42,
+      luckScale: 0.28,
       rarityBoost: {
-        Common: 0.92,
-        Uncommon: 1.02,
-        Rare: 0.95,
-        Epic: 0.6,
-        Legendary: 0.24,
-        Mythic: 0.08,
-        Contraband: 0.015
+        Common: 0.98,
+        Uncommon: 1.03,
+        Rare: 0.62,
+        Epic: 0.3,
+        Legendary: 0.09,
+        Mythic: 0.02,
+        Contraband: 0.004
       }
     },
     {
@@ -89,15 +89,15 @@
       cost: 6500,
       unlockCost: 170000,
       cardsPerPack: 6,
-      luckScale: 0.58,
+      luckScale: 0.45,
       rarityBoost: {
-        Common: 0.78,
-        Uncommon: 0.92,
-        Rare: 1.25,
-        Epic: 1.05,
-        Legendary: 0.5,
-        Mythic: 0.16,
-        Contraband: 0.03
+        Common: 0.86,
+        Uncommon: 0.96,
+        Rare: 0.95,
+        Epic: 0.62,
+        Legendary: 0.2,
+        Mythic: 0.05,
+        Contraband: 0.01
       }
     },
     {
@@ -231,6 +231,9 @@
   const REBIRTH_BASE_REQUIREMENT = 3000000;
   const AUTO_CLICKER_WINDOW_MS = 6500;
   const AUTO_CLICKER_MIN_CLICKS = 18;
+  const AUTO_CLICKER_ANALYSIS_CLICKS = 20;
+  const AUTO_CLICKER_MAX_HISTORY = 120;
+  const CHEATER_PENALTY_RATE = 0.8;
 
   const CARD_RARITY_SYSTEM = {
     'freaky henry': {
@@ -463,9 +466,9 @@
     {
       id: 'cheater-flagged',
       title: 'Cheater',
-      description: 'Auto-clicker detected. Balance penalty applied.',
+      description: 'Auto-clicker detected. Severe balance penalty applied.',
       reward: 0,
-      rewardLabel: '-50% balance',
+      rewardLabel: '-80% balance',
       tone: 'negative',
       condition: (s) => Boolean(s.cheaterDetected)
     }
@@ -523,6 +526,7 @@
     importSave: byId('import-save'),
     resetGame: byId('reset-game'),
     resultModal: byId('result-modal'),
+    resultCard: document.querySelector('#result-modal .result-card'),
     closeResult: byId('close-result'),
     resultTitle: byId('result-title'),
     resultText: byId('result-text'),
@@ -620,41 +624,122 @@
     }
     const now = Date.now();
     packClickHistory.push(now);
-    packClickHistory = packClickHistory.filter((time) => now - time <= AUTO_CLICKER_WINDOW_MS);
+    packClickHistory = packClickHistory
+      .filter((time) => now - time <= AUTO_CLICKER_WINDOW_MS * 2)
+      .slice(-AUTO_CLICKER_MAX_HISTORY);
 
-    if (packClickHistory.length < AUTO_CLICKER_MIN_CLICKS) {
+    if (packClickHistory.length < AUTO_CLICKER_MIN_CLICKS + 1) {
       return;
     }
 
-    const recent = packClickHistory.slice(-12);
-    if (recent.length < 12) {
+    const recent = packClickHistory.slice(-AUTO_CLICKER_ANALYSIS_CLICKS);
+    const windowClicks = packClickHistory.filter((time) => now - time <= AUTO_CLICKER_WINDOW_MS).length;
+    if (recent.length < AUTO_CLICKER_MIN_CLICKS + 1 || windowClicks < AUTO_CLICKER_MIN_CLICKS) {
       return;
+    }
+
+    const signal = analyzeAutoClickPattern(recent, windowClicks);
+    if (signal.flagged) {
+      triggerCheaterPenalty(signal);
+    }
+  }
+
+  function analyzeAutoClickPattern(recentClicks, windowClicks) {
+    if (!Array.isArray(recentClicks) || recentClicks.length < 2) {
+      return { flagged: false, score: 0, reasons: [] };
     }
     const intervals = [];
-    for (let i = 1; i < recent.length; i += 1) {
-      intervals.push(recent[i] - recent[i - 1]);
+    for (let i = 1; i < recentClicks.length; i += 1) {
+      intervals.push(recentClicks[i] - recentClicks[i - 1]);
     }
     const avg = intervals.reduce((sum, value) => sum + value, 0) / intervals.length;
     const variance = intervals.reduce((sum, value) => sum + ((value - avg) ** 2), 0) / intervals.length;
     const stdDev = Math.sqrt(variance);
-    const burstClicks = packClickHistory.length >= 28 && (now - packClickHistory[0]) <= AUTO_CLICKER_WINDOW_MS;
-    const machineRhythm = avg <= 145 && stdDev <= 28;
+    const minInterval = Math.min(...intervals);
+    const fastClicks = intervals.filter((value) => value <= 135).length;
+    const ultraFastClicks = intervals.filter((value) => value <= 90).length;
+    const fastRatio = fastClicks / intervals.length;
+    const ultraFastRatio = ultraFastClicks / intervals.length;
+    const monotony = stdDev / Math.max(1, avg);
+    const quantizedBuckets = new Set(intervals.map((value) => Math.round(value / 5) * 5)).size;
 
-    if (burstClicks || machineRhythm) {
-      triggerCheaterPenalty();
+    let score = 0;
+    const reasons = [];
+
+    if (windowClicks >= 36) {
+      score += 3;
+      reasons.push('extreme click burst');
+    } else if (windowClicks >= 30) {
+      score += 2;
+      reasons.push('high click burst');
     }
+    if (avg <= 150) {
+      score += 1;
+    }
+    if (avg <= 120) {
+      score += 2;
+      reasons.push('very fast cadence');
+    }
+    if (stdDev <= 20) {
+      score += 2;
+      reasons.push('unnaturally consistent timing');
+    }
+    if (stdDev <= 12) {
+      score += 1;
+    }
+    if (fastRatio >= 0.82) {
+      score += 1;
+    }
+    if (ultraFastRatio >= 0.45) {
+      score += 2;
+      reasons.push('too many sub-90ms intervals');
+    }
+    if (minInterval <= 45) {
+      score += 3;
+      reasons.push('sub-45ms interval detected');
+    }
+    if (monotony <= 0.18) {
+      score += 1;
+    }
+    if (quantizedBuckets <= 4 && intervals.length >= 16) {
+      score += 1;
+      reasons.push('fixed timer interval pattern');
+    }
+
+    const flagged = score >= 6 || (windowClicks >= 34 && avg <= 135 && stdDev <= 18);
+    return {
+      flagged,
+      score,
+      reasons,
+      avg,
+      stdDev,
+      minInterval,
+      windowClicks
+    };
   }
 
-  function triggerCheaterPenalty() {
+  function triggerCheaterPenalty(signal) {
     if (state.cheaterPenaltyApplied) {
       return;
     }
     state.cheaterDetected = true;
     state.cheaterPenaltyApplied = true;
-    const penalty = Math.floor(state.balance * 0.5);
+    const penalty = Math.floor(state.balance * CHEATER_PENALTY_RATE);
     state.balance = Math.max(0, state.balance - penalty);
-    pushLog(`Cheater detected: auto-clicker pattern flagged. Balance penalized ${money(penalty)} (-50%).`, 'negative');
+    const reasonSummary = signal && Array.isArray(signal.reasons) && signal.reasons.length
+      ? ` (${signal.reasons.slice(0, 2).join(', ')})`
+      : '';
+    pushLog(`Cheater detected: auto-clicker pattern flagged${reasonSummary}. Balance penalized ${money(penalty)} (-80%).`, 'negative');
     checkAchievements();
+    openResultModal({
+      title: 'Achievement Unlocked: Cheater',
+      text: `Auto-clicker detected. ${money(penalty)} removed from your balance (-80%).`,
+      detailHtml: `
+        <p><strong>Penalty:</strong> -${money(penalty)} from your balance.</p>
+        <p><strong>Achievement:</strong> Cheater unlocked.</p>
+      `,
+      tone: 'negative'
+    });
     saveState();
     renderAll();
   }
@@ -1009,15 +1094,20 @@
   }
 
   function sellAllSellableCards() {
+    if (!state.activePotRound && Object.keys(state.stake).length) {
+      state.stake = {};
+      pushLog('Queued stake released so all cards can be sold.', 'warning');
+    }
+
     let gained = 0;
     let soldCount = 0;
     CARD_IDS.forEach((cardId) => {
-      const sellable = getSellableQuantity(cardId);
-      if (!sellable) {
+      const quantity = state.inventory[cardId] || 0;
+      if (!quantity) {
         return;
       }
-      gained += sellCard(cardId, sellable);
-      soldCount += sellable;
+      gained += sellCard(cardId, quantity);
+      soldCount += quantity;
     });
     if (!soldCount) {
       pushLog('No sellable cards to liquidate.', 'warning');
@@ -1858,9 +1948,20 @@
     if (!dom.resultModal) {
       return;
     }
+    if (dom.resultCard) {
+      dom.resultCard.classList.remove('result-positive', 'result-negative');
+      if (payload.tone === 'positive') {
+        dom.resultCard.classList.add('result-positive');
+      }
+      if (payload.tone === 'negative') {
+        dom.resultCard.classList.add('result-negative');
+      }
+    }
     dom.resultTitle.textContent = payload.title;
     dom.resultText.textContent = payload.text;
-    if (payload.cards) {
+    if (typeof payload.detailHtml === 'string') {
+      dom.resultLoot.innerHTML = payload.detailHtml;
+    } else if (payload.cards) {
       const totalValue = getMapValue(payload.cards);
       dom.resultLoot.innerHTML = `
         <p><strong>Total Won:</strong> ${money(totalValue)}</p>
@@ -1875,6 +1976,9 @@
   function closeResultModal() {
     if (dom.resultModal) {
       dom.resultModal.setAttribute('hidden', '');
+    }
+    if (dom.resultCard) {
+      dom.resultCard.classList.remove('result-positive', 'result-negative');
     }
   }
 
