@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Henry Clicker</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260316-4">
 </head>
 <body>
   <div class="app-shell">
@@ -47,172 +47,186 @@
 
     <main class="layout">
       <nav id="tab-nav" class="panel tab-nav" aria-label="Game Sections">
-        <button data-tab-target="main" class="tab-btn active">Main</button>
+        <button data-tab-target="crates" class="tab-btn active">Crates</button>
+        <button data-tab-target="inventory" class="tab-btn">Inventory</button>
         <button data-tab-target="pot" class="tab-btn">Pot Arena</button>
         <button data-tab-target="shop" class="tab-btn">Shop</button>
         <button data-tab-target="achievements" class="tab-btn">Achievements</button>
         <button data-tab-target="events" class="tab-btn">Event Feed</button>
+        <button data-tab-target="save" class="tab-btn">Save Data</button>
       </nav>
 
-      <section id="tab-main" class="tab-panel active">
-        <section class="panel">
-          <div class="section-head">
-            <h2>Pack Forge</h2>
-            <p>Buy packs, roll weighted cards, and chase high-value drops.</p>
-          </div>
-          <div class="pack-controlbar">
-            <label>
-              Active Crate
-              <select id="active-pack-select"></select>
-            </label>
-            <button id="go-shop">Open Shop</button>
-          </div>
-          <div id="market-strip" class="market-strip"></div>
-          <div id="pack-buttons" class="pack-grid"></div>
-          <div class="inline-actions">
-            <button id="open-best">Open Best Affordable Pack</button>
-            <button id="open-ten">Open 10 Street Crates</button>
-            <button id="advance-market">Advance Market Tick</button>
-          </div>
-          <div id="last-pull" class="last-pull">No pulls yet.</div>
-          <div id="pack-results" class="pull-grid"></div>
-        </section>
-
-        <section class="panel">
-          <div class="section-head">
-            <h2>Your Cards</h2>
-            <p>Sell cards or reserve them for the pot game.</p>
-          </div>
-          <div class="toolbar">
-            <label>
-              Rarity
-              <select id="rarity-filter">
-                <option value="All">All</option>
-              </select>
-            </label>
-            <label>
-              Sort
-              <select id="sort-by">
-                <option value="value-desc">Value (High-Low)</option>
-                <option value="value-asc">Value (Low-High)</option>
-                <option value="qty-desc">Quantity</option>
-                <option value="name-asc">Name</option>
-                <option value="rarity-desc">Rarity</option>
-              </select>
-            </label>
-            <button id="sell-duplicates">Sell Duplicates</button>
-            <button id="sell-commons">Sell All Common</button>
-            <button id="sell-all-top">Sell All Sellable</button>
-            <button id="stake-all-top">Stake All Sellable</button>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Card</th>
-                  <th>Rarity</th>
-                  <th>Owned</th>
-                  <th>In Pot</th>
-                  <th>Unit Price</th>
-                  <th>Total Value</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="inventory-body">
-                <tr>
-                  <td colspan="7" class="empty">No cards yet. Open your first pack.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </section>
-
-      <section id="tab-pot" class="tab-panel" hidden>
-        <section class="panel">
-          <div class="section-head">
-            <h2>Pot Arena</h2>
-            <p>Stake cards against fake players. Winner takes the full pot.</p>
-          </div>
-          <div class="pot-statusbar">
-            <p id="pot-state-label">Waiting for a round to start.</p>
-            <div class="pot-timer-chip">
-              <span>Timer</span>
-              <strong id="pot-timer">00:00</strong>
+      <section class="workspace">
+        <section id="tab-crates" class="tab-panel active">
+          <section class="panel">
+            <div class="section-head">
+              <h2>Pack Forge</h2>
+              <p>Buy packs, roll weighted cards, and chase high-value drops.</p>
             </div>
-          </div>
-          <div class="pot-layout">
-            <article class="pot-col">
-              <h3>Your Stake</h3>
-              <div id="stake-list" class="stake-list">
-                <p class="empty">No cards staked yet.</p>
-              </div>
-              <p class="stake-total">Stake Value: <strong id="stake-value">$0</strong></p>
-              <div class="inline-actions">
-                <button id="clear-stake">Clear Stake</button>
-                <button id="start-pot-round" class="accent">Start Pot Round</button>
-              </div>
-            </article>
-            <article class="pot-col pot-summary-col">
-              <h3>Round Summary</h3>
-              <div id="pot-summary" class="pot-summary">
-                <p>Start a round after adding cards to your stake.</p>
-              </div>
-            </article>
-          </div>
+            <div class="pack-controlbar">
+              <label>
+                Active Crate
+                <select id="active-pack-select"></select>
+              </label>
+              <button id="go-shop">Open Shop</button>
+            </div>
+            <div id="market-strip" class="market-strip"></div>
+            <div id="pack-buttons" class="pack-grid"></div>
+            <div class="inline-actions">
+              <button id="open-best">Open Best Affordable Pack</button>
+              <button id="open-ten">Open 10 Street Crates</button>
+              <button id="advance-market">Advance Market Tick</button>
+            </div>
+            <div id="last-pull" class="last-pull">No pulls yet.</div>
+            <div id="pack-results" class="pull-grid"></div>
+          </section>
         </section>
-      </section>
 
-      <section id="tab-shop" class="tab-panel" hidden>
-        <section class="panel">
-          <div class="section-head">
-            <h2>Black Market Shop</h2>
-            <p>Unlock crates, buy permanent upgrades, and rebirth for long-run scaling.</p>
-          </div>
-          <div class="shop-grid">
-            <article class="shop-col">
-              <h3>Crate Unlocks</h3>
-              <div id="shop-pack-list" class="shop-list"></div>
-            </article>
-            <article class="shop-col">
-              <h3>Upgrades</h3>
-              <div id="shop-upgrade-list" class="shop-list"></div>
-            </article>
-          </div>
-          <article class="shop-col rebirth-card">
-            <h3>Rebirth</h3>
-            <p id="rebirth-info">Reach the net worth target to rebirth.</p>
-            <button id="rebirth-btn" class="accent">Rebirth Run</button>
-          </article>
+        <section id="tab-inventory" class="tab-panel" hidden>
+          <section class="panel">
+            <div class="section-head">
+              <h2>Your Cards</h2>
+              <p>Sell cards or reserve them for the pot game.</p>
+            </div>
+            <div class="toolbar">
+              <label>
+                Rarity
+                <select id="rarity-filter">
+                  <option value="All">All</option>
+                </select>
+              </label>
+              <label>
+                Sort
+                <select id="sort-by">
+                  <option value="value-desc">Value (High-Low)</option>
+                  <option value="value-asc">Value (Low-High)</option>
+                  <option value="qty-desc">Quantity</option>
+                  <option value="name-asc">Name</option>
+                  <option value="rarity-desc">Rarity</option>
+                </select>
+              </label>
+              <button id="sell-duplicates">Sell Duplicates</button>
+              <button id="sell-commons">Sell All Common</button>
+              <button id="sell-all-top">Sell All Sellable</button>
+              <button id="stake-all-top">Stake All Sellable</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Card</th>
+                    <th>Rarity</th>
+                    <th>Owned</th>
+                    <th>In Pot</th>
+                    <th>Unit Price</th>
+                    <th>Total Value</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-body">
+                  <tr>
+                    <td colspan="7" class="empty">No cards yet. Open your first pack.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
         </section>
-      </section>
 
-      <section id="tab-achievements" class="tab-panel" hidden>
-        <section class="panel">
-          <div class="section-head">
-            <h2>Achievements</h2>
-            <p>Unlock milestones for bonus cash.</p>
-          </div>
-          <div id="achievement-list" class="achievement-list"></div>
+        <section id="tab-pot" class="tab-panel" hidden>
+          <section class="panel">
+            <div class="section-head">
+              <h2>Pot Arena</h2>
+              <p>Stake cards against fake players. Winner takes the full pot.</p>
+            </div>
+            <div class="pot-statusbar">
+              <p id="pot-state-label">Waiting for a round to start.</p>
+              <div class="pot-timer-chip">
+                <span>Timer</span>
+                <strong id="pot-timer">00:00</strong>
+              </div>
+            </div>
+            <div class="pot-layout">
+              <article class="pot-col">
+                <h3>Your Stake</h3>
+                <div id="stake-list" class="stake-list">
+                  <p class="empty">No cards staked yet.</p>
+                </div>
+                <p class="stake-total">Stake Value: <strong id="stake-value">$0</strong></p>
+                <div class="inline-actions">
+                  <button id="clear-stake">Clear Stake</button>
+                  <button id="start-pot-round" class="accent">Start Pot Round</button>
+                </div>
+              </article>
+              <article class="pot-col pot-summary-col">
+                <h3>Round Summary</h3>
+                <div id="pot-summary" class="pot-summary">
+                  <p>Start a round after adding cards to your stake.</p>
+                </div>
+              </article>
+            </div>
+          </section>
         </section>
-      </section>
 
-      <section id="tab-events" class="tab-panel" hidden>
-        <section class="panel">
-          <div class="section-head">
-            <h2>Event Feed</h2>
-            <p>Latest game events, wins, losses, and market moves.</p>
-          </div>
-          <ul id="event-feed" class="event-feed"></ul>
+        <section id="tab-shop" class="tab-panel" hidden>
+          <section class="panel">
+            <div class="section-head">
+              <h2>Black Market Shop</h2>
+              <p>Unlock crates, buy permanent upgrades, and rebirth for long-run scaling.</p>
+            </div>
+            <div class="shop-grid">
+              <article class="shop-col">
+                <h3>Crate Unlocks</h3>
+                <div id="shop-pack-list" class="shop-list"></div>
+              </article>
+              <article class="shop-col">
+                <h3>Upgrades</h3>
+                <div id="shop-upgrade-list" class="shop-list"></div>
+              </article>
+            </div>
+            <article class="shop-col rebirth-card">
+              <h3>Rebirth</h3>
+              <p id="rebirth-info">Reach the net worth target to rebirth.</p>
+              <button id="rebirth-btn" class="accent">Rebirth Run</button>
+            </article>
+          </section>
+        </section>
+
+        <section id="tab-achievements" class="tab-panel" hidden>
+          <section class="panel">
+            <div class="section-head">
+              <h2>Achievements</h2>
+              <p>Unlock milestones for bonus cash.</p>
+            </div>
+            <div id="achievement-list" class="achievement-list"></div>
+          </section>
+        </section>
+
+        <section id="tab-events" class="tab-panel" hidden>
+          <section class="panel">
+            <div class="section-head">
+              <h2>Event Feed</h2>
+              <p>Latest game events, wins, losses, and market moves.</p>
+            </div>
+            <ul id="event-feed" class="event-feed"></ul>
+          </section>
+        </section>
+
+        <section id="tab-save" class="tab-panel" hidden>
+          <section class="panel save-panel">
+            <div class="section-head">
+              <h2>Save Data</h2>
+              <p>Export your save, import progress, or fully reset this run.</p>
+            </div>
+            <div class="save-actions">
+              <button id="export-save">Export Save</button>
+              <button id="import-save">Import Save</button>
+              <button id="reset-game" class="danger">Reset Progress</button>
+            </div>
+          </section>
         </section>
       </section>
     </main>
-
-    <footer class="panel footer-actions">
-      <button id="export-save">Export Save</button>
-      <button id="import-save">Import Save</button>
-      <button id="reset-game" class="danger">Reset Progress</button>
-    </footer>
   </div>
 
   <div id="result-modal" class="result-modal" hidden>
@@ -224,6 +238,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=20260316-4"></script>
 </body>
 </html>

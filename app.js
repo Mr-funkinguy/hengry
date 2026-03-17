@@ -533,11 +533,13 @@
     resultLoot: byId('result-loot'),
     tabButtons: Array.from(document.querySelectorAll('button[data-tab-target]')),
     tabPanels: {
-      main: byId('tab-main'),
+      crates: byId('tab-crates'),
+      inventory: byId('tab-inventory'),
       pot: byId('tab-pot'),
       shop: byId('tab-shop'),
       achievements: byId('tab-achievements'),
-      events: byId('tab-events')
+      events: byId('tab-events'),
+      save: byId('tab-save')
     }
   };
 
@@ -601,6 +603,9 @@
     state.rebirths = Math.max(0, Math.floor(Number(state.rebirths) || 0));
     state.cheaterDetected = Boolean(state.cheaterDetected);
     state.cheaterPenaltyApplied = Boolean(state.cheaterPenaltyApplied);
+    if ((!Array.isArray(state.recentPulls) || !state.recentPulls.length) && state.lastPullId && CATALOG[state.lastPullId]) {
+      state.recentPulls = [state.lastPullId];
+    }
   }
 
   function getPackById(packId) {
@@ -750,7 +755,7 @@
 
   function setActiveTab(target, skipSave) {
     if (!dom.tabPanels[target]) {
-      target = 'main';
+      target = 'crates';
     }
 
     activeTab = target;
@@ -1249,7 +1254,7 @@
     state.unlockedAchievements = keptAchievements;
     state.balance = 500 + nextRebirths * 400;
     closeResultModal();
-    setActiveTab('main');
+    setActiveTab('crates');
     pushLog(`Rebirth complete. Run #${nextRebirths} started with ${money(state.balance)}.`, 'positive');
     saveState();
     renderAll();
@@ -1595,9 +1600,11 @@
 
   function renderPullGrid() {
     if (!state.recentPulls.length) {
-      dom.packResults.innerHTML = '';
+      dom.packResults.classList.add('empty');
+      dom.packResults.innerHTML = '<p class="pull-empty">Open a crate to see your recent pulls here.</p>';
       return;
     }
+    dom.packResults.classList.remove('empty');
     dom.packResults.innerHTML = state.recentPulls
       .map((cardId, index) => renderCardTile(cardId, index))
       .join('');
@@ -2388,13 +2395,16 @@
   function loadActiveTab() {
     try {
       const stored = localStorage.getItem(TAB_STORAGE_KEY);
-      if (stored && ['main', 'pot', 'shop', 'achievements', 'events'].includes(stored)) {
+      if (stored === 'main') {
+        return 'crates';
+      }
+      if (stored && ['crates', 'inventory', 'pot', 'shop', 'achievements', 'events', 'save'].includes(stored)) {
         return stored;
       }
     } catch (error) {
-      return 'main';
+      return 'crates';
     }
-    return 'main';
+    return 'crates';
   }
 
   function saveActiveTab(tab) {
